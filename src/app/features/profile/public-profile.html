@@ -1,0 +1,43 @@
+<section class="profile-page">
+  @if (loading()) {
+    <div class="state"><span class="spinner"></span> جارٍ التحميل…</div>
+  } @else if (notFound()) {
+    <div class="notfound">
+      <div class="notfound__icon">🔍</div>
+      <h1>الصفحة غير موجودة</h1>
+      <p>ربما يكون الرابط خاطئاً أو أن الصفحة حُذفت.</p>
+      <a class="btn btn--primary" routerLink="/">العودة للرئيسية</a>
+    </div>
+  } @else if (profile(); as p) {
+    <div class="profile-card">
+      <span class="avatar avatar--xl">{{ initial(p.displayName) }}</span>
+
+      <h1 class="profile-card__name">
+        {{ p.displayName }}
+        @if (p.verified) { <span class="verified" title="موثّق">✔</span> }
+      </h1>
+      <p class="profile-card__handle">wasla.app/{{ p.handle }}</p>
+      @if (p.bio) {
+        <p class="profile-card__bio">{{ p.bio }}</p>
+      }
+
+      <ul class="links">
+        @for (link of links(); track link.id) {
+          <li>
+            <a class="link-btn" [href]="link.url" target="_blank" rel="noopener">
+              <span class="link-btn__title">{{ link.title }}</span>
+              <span class="link-btn__arrow">←</span>
+            </a>
+          </li>
+        } @empty {
+          <li class="links__empty">لا توجد روابط معروضة بعد.</li>
+        }
+      </ul>
+
+      <a class="brand-foot" routerLink="/" aria-label="وصلة">
+        <span class="brand__mark">🔗</span>
+        <span class="brand__name">وصلة</span>
+      </a>
+    </div>
+  }
+</section>

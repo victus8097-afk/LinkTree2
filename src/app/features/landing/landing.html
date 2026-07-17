@@ -1,0 +1,123 @@
+<section class="hero">
+  <div class="hero__bg" aria-hidden="true"></div>
+
+  <div class="hero__content">
+    <span class="badge">✨ منصة عربية لربط كل محتواك</span>
+    <h1>
+      اجمع كل روابطك في
+      <span class="grad">صفحة واحدة</span>
+      تحمل اسمك
+    </h1>
+    <p class="lead">
+      وصلة تتيح لك تجميع روابطك ومنصاتك وأعمالك في رابط شخصي أنيق واحد، تشاركه بسهولة من
+      إنستغرام وتويتر وتيك توك وكل مكان.
+    </p>
+
+    <div class="hero__cta">
+      @if (!auth.isAuthenticated()) {
+        <button class="btn btn--primary btn--lg" type="button" (click)="ui.openAuthModal()">
+          أنشئ صفحتك مجاناً
+        </button>
+      } @else {
+        <a class="btn btn--primary btn--lg" routerLink="/onboarding">أنشئ صفحتك</a>
+      }
+      <a class="btn btn--ghost btn--lg" href="#features">تعرف على المميزات</a>
+    </div>
+
+    <p class="hero__note">بدون بطاقة ائتمان • بدون كلمات مرور معقدة</p>
+  </div>
+
+  <div class="hero__mock" aria-hidden="true">
+    <div class="phone">
+      <div class="phone__notch"></div>
+      <div class="phone__screen">
+        <div class="phone__avatar">م</div>
+        <div class="phone__name">مريم أحمد</div>
+        <div class="phone__verified">✔ موثّقة</div>
+        <p class="phone__bio">مصممة جرافيك ومدربة فنون رقمية 🎨 أشارك هنا كل ما أبدعه.</p>
+        <div class="phone__links">
+          <span class="phone__link">📸 معرض أعمالي</span>
+          <span class="phone__link">▶️ قناتي على يوتيوب</span>
+          <span class="phone__link">🛍️ متجري الإلكتروني</span>
+          <span class="phone__link">📝 مدونتي</span>
+        </div>
+        <div class="phone__brand">وصلة</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="features" class="section">
+  <div class="section__head">
+    <h2>لماذا وصلة؟</h2>
+    <p>كل ما تحتاجه لحضور رقمي موحّد، بأقل جهد.</p>
+  </div>
+
+  <div class="grid grid--3">
+    <article class="card-feature">
+      <div class="card-feature__icon">🎨</div>
+      <h3>تصميم يشبهك</h3>
+      <p>واجهة عربية أنيقة تدعم الاتجاه من اليمين لليسار، بخط Alexandria المميز وتأثيرات عصرية.</p>
+    </article>
+    <article class="card-feature">
+      <div class="card-feature__icon">🔗</div>
+      <h3>نظّم روابطك</h3>
+      <p>أضف كل روابطك ومنصاتك وأعمالك في مكان واحد، ورتّبها كما تشاء بسهولة.</p>
+    </article>
+    <article class="card-feature">
+      <div class="card-feature__icon">📲</div>
+      <h3>شارك بضغطة</h3>
+      <p>رابط شخصي فريد مثل <code>wasla.app/maryam</code> تضعه في سيرتك الذاتية وكل حساباتك.</p>
+    </article>
+    <article class="card-feature">
+      <div class="card-feature__icon">🔒</div>
+      <h3>دخول آمن</h3>
+      <p>تسجيل دخول عبر البريد برابط سحري (Magic Link) — بلا كلمات مرور تُنسى.</p>
+    </article>
+    <article class="card-feature">
+      <div class="card-feature__icon">⚡</div>
+      <h3>سريع ومتجاوب</h3>
+      <p>صفحتك تبدو رائعة على الجوال والحاسوب، وتُحمَّل بسرعة على أي جهاز.</p>
+    </article>
+    <article class="card-feature">
+      <div class="card-feature__icon">📊</div>
+      <h3>تحكّم كامل</h3>
+      <p>عدّل بياناتك وروابطك في أي وقت من لوحة تحكم بسيطة وسهلة.</p>
+    </article>
+  </div>
+</section>
+
+<section id="how" class="section section--alt">
+  <div class="section__head">
+    <h2>كيف تعمل وصلة؟</h2>
+    <p>ثلاث خطوات بسيطة وتصبح جاهزاً.</p>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step__num">١</div>
+      <h3>سجّل دخولك</h3>
+      <p>أدخل بريدك الإلكتروني وستصلك رسالة برابط دخول آمن — بلا كلمة مرور.</p>
+    </div>
+    <div class="step">
+      <div class="step__num">٢</div>
+      <h3>خصّص صفحتك</h3>
+      <p>اختر اسمك ورابطك الخاص ونبذة عنك، ثم أضف كل روابطك ومنصاتك.</p>
+    </div>
+    <div class="step">
+      <div class="step__num">٣</div>
+      <h3>شارك رابطك</h3>
+      <p>انسخ رابط صفحتك وضعه في كل حساباتك ليصل جمهورك إلى كل شيء بضغطة.</p>
+    </div>
+  </div>
+
+  <div class="section__cta">
+    @if (!auth.isAuthenticated()) {
+      <button class="btn btn--primary btn--lg" type="button" (click)="ui.openAuthModal()">
+        ابدأ الآن — مجاناً
+      </button>
+    } @else {
+      <a class="btn btn--primary btn--lg" routerLink="/onboarding">أنشئ صفحتك</a>
+    }
+  </div>
+</section>

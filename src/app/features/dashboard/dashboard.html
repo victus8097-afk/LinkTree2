@@ -1,0 +1,120 @@
+<section class="dash">
+  <div class="dash__top">
+    <div>
+      <h1>لوحة التحكم</h1>
+      <p>أدِر صفحتك الشخصية وروابطك من مكان واحد.</p>
+    </div>
+    <div class="dash__top-actions">
+      <button class="btn btn--primary" type="button" (click)="copyLink()">
+        @if (copied()) { ✔ تم النسخ } @else { 📋 نسخ رابط صفحتي }
+      </button>
+      <a class="btn btn--ghost" [href]="profileLink" target="_blank" rel="noopener">👁 معاينة الصفحة</a>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="state"><span class="spinner"></span> جارٍ التحميل…</div>
+  } @else if (profile(); as p) {
+
+    <div class="grid">
+      <!-- Profile summary -->
+      <div class="card profile">
+        <div class="profile__main">
+          <span class="avatar avatar--lg">{{ initial(p.displayName) }}</span>
+          <div class="profile__info">
+            <h2>
+              {{ p.displayName }}
+              @if (p.verified) { <span class="verified" title="موثّق">✔</span> }
+            </h2>
+            <p class="profile__handle">wasla.app/{{ p.handle }}</p>
+            <p class="profile__bio">{{ p.bio || 'لا توجد نبذة بعد.' }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Account edit -->
+      <div class="card edit">
+        <div class="card__head">
+          <h3>بيانات الحساب</h3>
+          @if (!editMode()) {
+            <button class="btn btn--ghost btn--sm" type="button" (click)="openEdit()">تعديل</button>
+          }
+        </div>
+
+        @if (editMode()) {
+          <form class="form" (ngSubmit)="saveProfile()">
+            <label class="field">
+              <span>الاسم الظاهر</span>
+              <input type="text" name="name" [(ngModel)]="editName" maxlength="40" required />
+            </label>
+            <label class="field">
+              <span>النبذة</span>
+              <textarea name="bio" [(ngModel)]="editBio" rows="3" maxlength="160"></textarea>
+            </label>
+            <div class="row">
+              <button class="btn btn--primary btn--sm" type="submit" [disabled]="savingProfile()">
+                @if (savingProfile()) { <span class="spinner spinner--sm"></span> حفظ } @else { حفظ }
+              </button>
+              <button class="btn btn--ghost btn--sm" type="button" (click)="cancelEdit()">إلغاء</button>
+            </div>
+          </form>
+        } @else {
+          <dl class="kv">
+            <div><dt>الاسم</dt><dd>{{ p.displayName }}</dd></div>
+            <div><dt>الرابط</dt><dd>wasla.app/{{ p.handle }}</dd></div>
+            <div><dt>النبذة</dt><dd>{{ p.bio || '—' }}</dd></div>
+            <div><dt>البريد</dt><dd>{{ p.email }}</dd></div>
+          </dl>
+        }
+      </div>
+    </div>
+
+    <!-- Links management -->
+    <div class="card links">
+      <div class="card__head">
+        <h3>روابطي ({{ links().length }})</h3>
+      </div>
+
+      <form class="link-form" (ngSubmit)="addLink()" #lf="ngForm">
+        <input
+          type="text"
+          name="title"
+          [(ngModel)]="newTitle"
+          placeholder="عنوان الرابط (مثال: معرض أعمالي)"
+          aria-label="عنوان الرابط"
+        />
+        <input
+          type="text"
+          name="url"
+          [(ngModel)]="newUrl"
+          placeholder="الرابط (مثال: behance.net/maryam)"
+          aria-label="الرابط"
+          dir="ltr"
+        />
+        <button class="btn btn--primary" type="submit" [disabled]="adding()">
+          @if (adding()) { <span class="spinner spinner--sm"></span> } @else { + إضافة }
+        </button>
+      </form>
+
+      @if (linkError()) {
+        <div class="alert alert--error">{{ linkError() }}</div>
+      }
+
+      <ul class="link-list">
+        @for (link of links(); track link.id) {
+          <li class="link-item">
+            <div class="link-item__text">
+              <span class="link-item__title">{{ link.title }}</span>
+              <span class="link-item__url">{{ link.url }}</span>
+            </div>
+            <button class="btn btn--danger btn--sm" type="button" (click)="removeLink(link.id)">حذف</button>
+          </li>
+        } @empty {
+          <li class="empty">لا توجد روابط بعد — أضف أول رابط يصل زوّارك بما تقدّمه.</li>
+        }
+      </ul>
+    </div>
+
+    <button class="btn btn--ghost logout" type="button" (click)="logout()">تسجيل الخروج</button>
+  }
+</section>
