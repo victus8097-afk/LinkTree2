@@ -1,0 +1,73 @@
+<section class="onboarding">
+  <div class="onboarding__card">
+    <header class="onboarding__head">
+      <span class="badge">👋 أهلاً بك في وصلة</span>
+      <h1>إعداد صفحتك الشخصية</h1>
+      <p>امنح زوّارك رابطاً واحداً يصلهم بكل ما تقدّمه.</p>
+    </header>
+
+    <form class="form" (ngSubmit)="submit()" #f="ngForm">
+      <label class="field">
+        <span>الاسم الظاهر</span>
+        <input
+          type="text"
+          name="displayName"
+          [(ngModel)]="displayName"
+          placeholder="مثال: مريم أحمد"
+          required
+          maxlength="40"
+        />
+      </label>
+
+      <label class="field">
+        <span>الرابط الخاص بك</span>
+        <div class="handle" [class.handle--ok]="handleStatus() === 'available'">
+          <span class="handle__prefix">wasla.app/</span>
+          <input
+            #handleInput
+            type="text"
+            name="handle"
+            [value]="handle()"
+            (input)="onHandleInput(handleInput.value)"
+            placeholder="maryam"
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <span class="handle__status">
+            @switch (handleStatus()) {
+              @case ('checking') { <span class="spinner spinner--sm"></span> }
+              @case ('available') { <span class="ok">✔ متاح</span> }
+              @case ('taken') { <span class="bad">✕ مستخدم</span> }
+              @case ('invalid') { <span class="bad">ⅹ قصير</span> }
+            }
+          </span>
+        </div>
+        <small class="hint">3 أحرف على الأقل — أحرف لاتينية وأرقام و _ و - فقط.</small>
+      </label>
+
+      <label class="field">
+        <span>نبذة قصيرة عنك</span>
+        <textarea
+          name="bio"
+          [(ngModel)]="bio"
+          rows="3"
+          maxlength="160"
+          placeholder="ماذا تقدّم؟ اكتب نبذة تعرّف بك وبأعمالك."
+        ></textarea>
+        <small class="hint">{{ bio().length }}/160</small>
+      </label>
+
+      @if (error()) {
+        <div class="alert alert--error">{{ error() }}</div>
+      }
+
+      <button class="btn btn--primary btn--block btn--lg" type="submit" [disabled]="!canSubmit">
+        @if (submitting()) {
+          <span class="spinner"></span> جارٍ الحفظ…
+        } @else {
+          إنشاء صفحتي
+        }
+      </button>
+    </form>
+  </div>
+</section>

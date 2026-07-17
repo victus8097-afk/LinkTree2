@@ -1,0 +1,282 @@
+/* ===== تصميم وصلة — نظام التصميم العام ===== */
+
+:root {
+  --bg: #0b0617;
+  --surface: #140d24;
+  --surface-2: #1d1433;
+  --border: #2a2040;
+  --text: #f3eefc;
+  --muted: #a99fc4;
+  --brand: #a855f7;
+  --brand-2: #6366f1;
+  --gradient: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);
+
+  --radius: 16px;
+  --maxw: 1120px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  direction: rtl;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Alexandria', 'Tajawal', 'Cairo', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: inherit;
+}
+
+code {
+  font-family: 'Courier New', monospace;
+}
+
+/* ===== أزرار ===== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border-radius: 12px;
+  padding: 0.7rem 1.2rem;
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btn--primary {
+  background: var(--gradient);
+  color: #fff;
+  box-shadow: 0 10px 26px color-mix(in srgb, var(--brand) 35%, transparent);
+}
+.btn--primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 34px color-mix(in srgb, var(--brand) 45%, transparent);
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--border);
+}
+.btn--ghost:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--brand) 50%, var(--border));
+  background: var(--surface-2);
+}
+
+.btn--danger {
+  background: transparent;
+  color: #ff7a7a;
+  border-color: color-mix(in srgb, #ff7a7a 40%, var(--border));
+}
+.btn--danger:hover:not(:disabled) {
+  background: color-mix(in srgb, #ff7a7a 14%, transparent);
+}
+
+.btn--block {
+  width: 100%;
+}
+.btn--lg {
+  padding: 0.95rem 1.6rem;
+  font-size: 1.05rem;
+  border-radius: 14px;
+}
+.btn--sm {
+  padding: 0.5rem 0.9rem;
+  font-size: 0.85rem;
+}
+
+/* ===== حقول الإدخال ===== */
+.form {
+  display: grid;
+  gap: 1.1rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.field > span {
+  font-weight: 700;
+  color: var(--text);
+  font-size: 0.92rem;
+}
+
+input,
+textarea {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.8rem 0.95rem;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: color-mix(in srgb, var(--muted) 75%, transparent);
+}
+
+input:focus,
+textarea:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 22%, transparent);
+}
+
+textarea {
+  resize: vertical;
+}
+
+/* ===== تنبيهات ===== */
+.alert {
+  border-radius: 12px;
+  padding: 0.75rem 0.95rem;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  border: 1px solid transparent;
+}
+.alert--success {
+  background: color-mix(in srgb, #2ecc71 16%, transparent);
+  border-color: color-mix(in srgb, #2ecc71 45%, transparent);
+  color: #b6f3cf;
+}
+.alert--error {
+  background: color-mix(in srgb, #ff6b6b 16%, transparent);
+  border-color: color-mix(in srgb, #ff6b6b 45%, transparent);
+  color: #ffc9c9;
+}
+
+/* ===== الصور الرمزية ===== */
+.avatar {
+  display: inline-grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--gradient);
+  color: #fff;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.avatar--sm {
+  width: 34px;
+  height: 34px;
+  font-size: 0.95rem;
+}
+.avatar--lg {
+  width: 64px;
+  height: 64px;
+  font-size: 1.7rem;
+}
+.avatar--xl {
+  width: 92px;
+  height: 92px;
+  font-size: 2.4rem;
+}
+
+/* ===== مؤشر التحميل ===== */
+.spinner {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid color-mix(in srgb, #fff 35%, transparent);
+  border-top-color: #fff;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+}
+.spinner--sm {
+  width: 14px;
+  height: 14px;
+  border-width: 2px;
+}
+
+/* ===== حركات ===== */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+::selection {
+  background: color-mix(in srgb, var(--brand) 45%, transparent);
+  color: #fff;
+}
+
+/* شريط تمرير أنيق */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--brand) 50%, var(--border));
+}
