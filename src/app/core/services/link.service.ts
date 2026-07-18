@@ -94,4 +94,15 @@ export class LinkService {
   private saveLocal(links: Link[]): void {
     localStorage.setItem(LOCAL_LINKS_KEY, JSON.stringify(links));
   }
+
+  /** تتبع نقرة على الرابط (للتحليلات) */
+  async trackClick(linkId: string): Promise<void> {
+    if (this.supabase.isConfigured && this.supabase.client) {
+      const { error } = await this.supabase.client
+        .from('link_clicks')
+        .insert({ link_id: linkId, clicked_at: new Date().toISOString() });
+      if (error) console.warn('Failed to track click:', error);
+    }
+    // في حالة التخزين المحلي، يمكن إضافة عداد للنقرات محلياً
+  }
 }

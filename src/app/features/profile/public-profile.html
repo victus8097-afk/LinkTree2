@@ -1,43 +1,92 @@
 <section class="profile-page">
+  <div class="bg-decoration" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+  </div>
+
   @if (loading()) {
-    <div class="state"><span class="spinner"></span> جارٍ التحميل…</div>
+    <div class="state">
+      <span class="spinner"></span>
+      <span>جاري التحميل…</span>
+    </div>
+  } @else if (error()) {
+    <div class="error-state">
+      <div class="error-icon">⚠️</div>
+      <h1>تعذر التحميل</h1>
+      <p>{{ error() }}</p>
+      <button class="btn btn--primary" (click)="reload()">إعادة المحاولة</button>
+      <a class="btn btn--ghost" routerLink="/">العودة للرئيسية</a>
+    </div>
   } @else if (notFound()) {
-    <div class="notfound">
-      <div class="notfound__icon">🔍</div>
+    <div class="not-found">
+      <div class="not-found__icon">🔍</div>
       <h1>الصفحة غير موجودة</h1>
       <p>ربما يكون الرابط خاطئاً أو أن الصفحة حُذفت.</p>
       <a class="btn btn--primary" routerLink="/">العودة للرئيسية</a>
     </div>
   } @else if (profile(); as p) {
-    <div class="profile-card">
-      <span class="avatar avatar--xl">{{ initial(p.displayName) }}</span>
+    <div class="profile-container">
+      <article class="profile-card">
+        <header class="profile-header">
+          <div class="avatar-wrapper">
+            @if (getProfileImage(); as avatarUrl) {
+              <img [src]="avatarUrl" alt="" class="avatar avatar--xl" loading="lazy" />
+            } @else {
+              <span class="avatar avatar--xl">{{ initial(p.displayName) }}</span>
+            }
+            @if (p.verified) {
+              <span class="verified-badge" title="موثّق">✔</span>
+            }
+          </div>
 
-      <h1 class="profile-card__name">
-        {{ p.displayName }}
-        @if (p.verified) { <span class="verified" title="موثّق">✔</span> }
-      </h1>
-      <p class="profile-card__handle">wasla.app/{{ p.handle }}</p>
-      @if (p.bio) {
-        <p class="profile-card__bio">{{ p.bio }}</p>
-      }
+          <h1 class="profile-name">{{ p.displayName }}</h1>
+          <p class="profile-handle">wasla.app/{{ p.handle }}</p>
 
-      <ul class="links">
-        @for (link of links(); track link.id) {
-          <li>
-            <a class="link-btn" [href]="link.url" target="_blank" rel="noopener">
-              <span class="link-btn__title">{{ link.title }}</span>
-              <span class="link-btn__arrow">←</span>
-            </a>
-          </li>
-        } @empty {
-          <li class="links__empty">لا توجد روابط معروضة بعد.</li>
-        }
-      </ul>
+          @if (p.bio) {
+            <p class="profile-bio">{{ p.bio }}</p>
+          }
+        </header>
 
-      <a class="brand-foot" routerLink="/" aria-label="وصلة">
-        <span class="brand__mark">🔗</span>
-        <span class="brand__name">وصلة</span>
-      </a>
+        <section class="links-section" aria-label="الروابط">
+          <ul class="links-list" role="list">
+            @for (link of linksWithIcons(); track link.id; let i = $index) {
+              <li class="link-item" style="animation-delay: {{ i * 50 }}ms">
+                <a
+                  class="link-btn"
+                  [href]="link.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  (click)="trackClick(link)"
+                  [attr.aria-label]="link.title + ', يفتح في تبويب جديد'"
+                >
+                  <span class="link-icon" [class.brand-icon]="link.iconType === 'brand'">
+                    {{ link.icon }}
+                  </span>
+                  <div class="link-content">
+                    <span class="link-title">{{ link.title }}</span>
+                    <span class="link-meta">{{ getDomain(link.url) }}</span>
+                  </div>
+                  <span class="link-arrow" aria-hidden="true">←</span>
+                </a>
+              </li>
+            } @empty {
+              <li class="links-empty">
+                <span class="empty-icon">🔗</span>
+                <p>لا توجد روابط معروضة بعد</p>
+                <small>سيظهر هنا روابط الملف الشخصي عند إضافتها</small>
+              </li>
+            }
+          </ul>
+        </section>
+
+        <footer class="profile-footer">
+          <a class="brand-foot" routerLink="/" aria-label="وصلة - اصنع صفحتك">
+            <span class="brand-mark">🔗</span>
+            <span class="brand-name">وصلة</span>
+          </a>
+          <p class="footer-note">اجمع كل روابطك في صفحة واحدة أنيقة</p>
+        </footer>
+      </article>
     </div>
   }
 </section>

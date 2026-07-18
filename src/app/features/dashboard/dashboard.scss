@@ -137,6 +137,22 @@
   word-break: break-word;
 }
 
+.avatar-preview {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--border);
+}
+
+/* Field hint */
+.field__hint {
+  display: block;
+  margin-top: 0.35rem;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
 /* Links */
 .links {
   margin-top: 0;

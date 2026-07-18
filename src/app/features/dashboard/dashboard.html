@@ -20,7 +20,11 @@
       <!-- Profile summary -->
       <div class="card profile">
         <div class="profile__main">
-          <span class="avatar avatar--lg">{{ initial(p.displayName) }}</span>
+          @if (p.avatarUrl) {
+            <img class="avatar avatar--lg" [src]="p.avatarUrl" alt="" />
+          } @else {
+            <span class="avatar avatar--lg">{{ initial(p.displayName) }}</span>
+          }
           <div class="profile__info">
             <h2>
               {{ p.displayName }}
@@ -51,6 +55,17 @@
               <span>النبذة</span>
               <textarea name="bio" [(ngModel)]="editBio" rows="3" maxlength="160"></textarea>
             </label>
+            <label class="field">
+              <span>رابط الصورة الشخصية</span>
+              <input
+                type="url"
+                name="avatarUrl"
+                [(ngModel)]="editAvatarUrl"
+                placeholder="https://example.com/avatar.jpg"
+                dir="ltr"
+              />
+              <small class="field__hint">اتركه فارغاً لاستخدام الحرف الأول من اسمك</small>
+            </label>
             <div class="row">
               <button class="btn btn--primary btn--sm" type="submit" [disabled]="savingProfile()">
                 @if (savingProfile()) { <span class="spinner spinner--sm"></span> حفظ } @else { حفظ }
@@ -64,6 +79,9 @@
             <div><dt>الرابط</dt><dd>wasla.app/{{ p.handle }}</dd></div>
             <div><dt>النبذة</dt><dd>{{ p.bio || '—' }}</dd></div>
             <div><dt>البريد</dt><dd>{{ p.email }}</dd></div>
+            @if (p.avatarUrl) {
+              <div><dt>الصورة</dt><dd><img [src]="p.avatarUrl" alt="" class="avatar-preview" /></dd></div>
+            }
           </dl>
         }
       </div>

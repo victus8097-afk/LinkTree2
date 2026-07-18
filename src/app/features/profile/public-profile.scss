@@ -1,149 +1,603 @@
+/* ===== صفحة الملف الشخصي - Link Tree Design ===== */
+
 :host {
   display: block;
+  min-height: 100vh;
 }
 
 .profile-page {
-  max-width: 520px;
-  margin: 0 auto;
+  min-height: 100vh;
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
   padding: 3rem 1.25rem 4rem;
-  min-height: 70vh;
+  background: var(--bg);
+  position: relative;
+  overflow-x: hidden;
 }
 
-.state {
+/* ===== الخلفية المزخرفة ===== */
+.bg-decoration {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.25;
+  animation: orbFloat 25s ease-in-out infinite;
+}
+
+.orb-1 {
+  width: 400px;
+  height: 400px;
+  background: var(--brand);
+  top: -150px;
+  right: -150px;
+  animation-delay: 0s;
+}
+
+.orb-2 {
+  width: 300px;
+  height: 300px;
+  background: var(--brand-2);
+  bottom: -80px;
+  left: -80px;
+  animation-delay: -12s;
+}
+
+@keyframes orbFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(40px, -30px) scale(1.08); }
+  50% { transform: translate(-20px, 40px) scale(0.95); }
+  75% { transform: translate(30px, 20px) scale(1.03); }
+}
+
+/* ===== حالات التحميل والأخطاء ===== */
+.state,
+.error-state,
+.not-found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
   text-align: center;
+  padding: 4rem 1.5rem;
   color: var(--muted);
-  padding: 4rem 0;
-  display: flex;
-  gap: 0.6rem;
-  justify-content: center;
-  align-items: center;
+  min-height: 60vh;
+  width: 100%;
 }
 
-.profile-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 26px;
-  padding: 2.5rem 1.8rem;
-  text-align: center;
-  box-shadow: 0 30px 70px color-mix(in srgb, #0b0617 22%, transparent);
-  animation: rise 0.5s ease both;
-}
-
-.profile-card__name {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.45rem;
-  font-size: 1.6rem;
-  margin: 1rem 0 0.2rem;
+.error-state {
   color: var(--text);
 }
 
-.verified {
-  color: #fff;
-  background: var(--brand);
-  font-size: 0.8rem;
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
+.error-icon,
+.not-found__icon {
+  font-size: 4rem;
+  opacity: 0.8;
+}
+
+.error-state h1,
+.not-found h1 {
+  color: var(--text);
+  margin: 0.5rem 0;
+  font-size: 1.5rem;
+}
+
+.error-state p,
+.not-found p {
+  max-width: 300px;
+  margin: 0 auto 1.5rem;
+  line-height: 1.6;
+}
+
+.error-state .btn,
+.not-found .btn {
+  margin: 0 0.4rem;
+}
+
+/* ===== حاوية الملف الشخصي ===== */
+.profile-container {
+  width: 100%;
+  max-width: 480px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ===== بطاقة الملف الشخصي ===== */
+.profile-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  padding: 2.5rem 1.75rem 2rem;
+  box-shadow:
+    0 4px 24px color-mix(in srgb, #0b0617 18%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--brand) 8%, transparent);
+  animation: cardRise 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 28px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--brand) 6%, transparent) 0%, transparent 50%);
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+@keyframes cardRise {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ===== الهيدر ===== */
+.profile-header {
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.avatar-wrapper {
+  position: relative;
+  display: inline-flex;
+  margin-bottom: 1.1rem;
+}
+
+.avatar {
   display: inline-grid;
   place-items: center;
+  border-radius: 50%;
+  background: var(--gradient);
+  color: #fff;
+  font-weight: 800;
+  flex-shrink: 0;
+  box-shadow:
+    0 8px 32px color-mix(in srgb, var(--brand) 35%, transparent),
+    0 0 0 4px var(--surface);
 }
 
-.profile-card__handle {
+.avatar--xl {
+  width: 100px;
+  height: 100px;
+  font-size: 2.5rem;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid var(--surface);
+  box-shadow:
+    0 8px 32px color-mix(in srgb, var(--brand) 35%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--border) 30%, transparent);
+}
+
+.verified-badge {
+  position: absolute;
+  bottom: 2px;
+  right: -4px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--brand);
+  color: #fff;
+  font-size: 0.85rem;
+  display: inline-grid;
+  place-items: center;
+  box-shadow:
+    0 0 0 4px var(--surface),
+    0 4px 16px color-mix(in srgb, var(--brand) 40%, transparent);
+  animation: verifiedPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
+}
+
+@keyframes verifiedPop {
+  from { transform: scale(0) rotate(-45deg); opacity: 0; }
+  to { transform: scale(1) rotate(0); opacity: 1; }
+}
+
+.profile-name {
+  margin: 0.4rem 0 0.15rem;
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.profile-handle {
+  margin: 0 0 0.6rem;
   color: var(--brand);
   font-weight: 700;
-  margin: 0 0 0.9rem;
+  font-size: 1rem;
   direction: ltr;
   text-align: center;
+  font-variant-numeric: tabular-nums;
 }
 
-.profile-card__bio {
+.profile-bio {
+  margin: 0.2rem auto 1.4rem;
+  max-width: 380px;
   color: var(--muted);
-  line-height: 1.8;
-  margin: 0 0 1.6rem;
+  line-height: 1.7;
+  font-size: 0.98rem;
 }
 
-.links {
+/* ===== قسم الإجراءات ===== */
+.profile-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+}
+
+.profile-actions .btn {
+  flex: 1;
+  min-width: 140px;
+  max-width: 180px;
+}
+
+/* ===== قسم الروابط ===== */
+.links-section {
+  margin-top: 0.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.links-list {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 0.75rem;
+  gap: 0.7rem;
+}
+
+/* ===== عنصر الرابط ===== */
+.link-item {
+  opacity: 0;
+  animation: linkPop 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes linkPop {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .link-btn {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  padding: 0.95rem 1.2rem;
-  border-radius: 16px;
+  gap: 0.9rem;
+  padding: 1rem 1.15rem;
+  border-radius: 18px;
   background: var(--bg);
   border: 1px solid var(--border);
   color: var(--text);
   text-decoration: none;
   font-weight: 700;
   font-size: 1.02rem;
-  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+  transition:
+    transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 0.18s ease,
+    background 0.18s ease,
+    box-shadow 0.18s ease;
+  width: 100%;
+  text-align: right;
 }
 
 .link-btn:hover {
   transform: translateY(-3px);
   border-color: color-mix(in srgb, var(--brand) 55%, var(--border));
-  background: color-mix(in srgb, var(--brand) 10%, var(--bg));
+  background: color-mix(in srgb, var(--brand) 12%, var(--bg));
+  box-shadow:
+    0 12px 32px color-mix(in srgb, var(--brand) 15%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--brand) 25%, var(--border));
 }
 
-.link-btn__arrow {
-  color: var(--brand);
-  font-size: 1.2rem;
-  transition: transform 0.18s ease;
+.link-btn:active {
+  transform: translateY(-1px);
+  transition-duration: 0.05s;
 }
 
-.link-btn:hover .link-btn__arrow {
-  transform: translateX(-4px);
+.link-btn:focus-visible {
+  outline: none;
+  border-color: var(--brand);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand) 25%, transparent);
 }
 
-.links__empty {
+/* أيقونة الرابط */
+.link-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  font-size: 1.25rem;
+  flex-shrink: 0;
+  transition:
+    transform 0.18s ease,
+    background 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.link-btn:hover .link-icon {
+  transform: scale(1.08) rotate(3deg);
+  border-color: color-mix(in srgb, var(--brand) 50%, var(--border));
+}
+
+.brand-icon {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--brand) 18%, var(--surface-2)) 0%, var(--surface-2) 100%);
+  border-color: color-mix(in srgb, var(--brand) 35%, var(--border));
+}
+
+/* محتوى الرابط */
+.link-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  text-align: right;
+}
+
+.link-title {
+  font-weight: 700;
+  font-size: 1.02rem;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.link-meta {
+  font-size: 0.8rem;
   color: var(--muted);
-  padding: 1.2rem;
-  border: 1px dashed var(--border);
-  border-radius: 16px;
+  font-weight: 500;
+  direction: ltr;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* سهم الرابط */
+.link-arrow {
+  color: var(--brand);
+  font-size: 1.25rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+  margin-left: 0.3rem;
+}
+
+.link-btn:hover .link-arrow {
+  transform: translateX(-6px);
+}
+
+/* ===== حالة فارغة ===== */
+.links-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 2.5rem 1.5rem;
+  border: 2px dashed var(--border);
+  border-radius: 20px;
+  text-align: center;
+  animation: fadeIn 0.5s ease both;
+}
+
+.empty-icon {
+  font-size: 2.5rem;
+  opacity: 0.5;
+}
+
+.links-empty p {
+  margin: 0;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.links-empty small {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ===== الفوتر ===== */
+.profile-footer {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid color-mix(in srgb, var(--border) 50%, transparent);
+  text-align: center;
+  position: relative;
+  z-index: 1;
 }
 
 .brand-foot {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  margin-top: 2rem;
+  gap: 0.45rem;
   text-decoration: none;
-  opacity: 0.85;
-  transition: opacity 0.2s ease;
+  opacity: 0.75;
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
+
 .brand-foot:hover {
   opacity: 1;
+  transform: translateY(-2px);
 }
-.brand__name {
+
+.brand-mark {
+  font-size: 1.15rem;
+}
+
+.brand-name {
   font-weight: 800;
+  font-size: 1.05rem;
   background: var(--gradient);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
-/* Not found */
-.notfound {
-  text-align: center;
-  padding: 3rem 1rem;
-}
-.notfound__icon {
-  font-size: 3rem;
-}
-.notfound h1 {
-  color: var(--text);
-  margin: 0.5rem 0;
-}
-.notfound p {
+.footer-note {
+  margin: 0.75rem 0 0;
   color: var(--muted);
-  margin-bottom: 1.5rem;
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+/* ===== Toast notification ===== */
+.toast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 0.85rem 1.5rem;
+  color: var(--text);
+  font-weight: 600;
+  font-size: 0.95rem;
+  box-shadow: 0 20px 40px color-mix(in srgb, #0b0617 35%, transparent);
+  z-index: 1000;
+  opacity: 0;
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s ease;
+}
+
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+/* ===== استجابة للحركة المقللة ===== */
+@media (prefers-reduced-motion: reduce) {
+  .orb,
+  .profile-card,
+  .link-item,
+  .verified-badge,
+  .toast {
+    animation: none !important;
+    transition: none !important;
+  }
+  .link-btn:hover {
+    transform: none;
+  }
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 480px) {
+  .profile-page {
+    padding: 2rem 1rem 3rem;
+  }
+
+  .profile-card {
+    padding: 2rem 1.25rem 1.5rem;
+    border-radius: 24px;
+  }
+
+  .avatar--xl {
+    width: 88px;
+    height: 88px;
+    font-size: 2.1rem;
+  }
+
+  .link-btn {
+    padding: 0.95rem 1rem;
+    gap: 0.75rem;
+    border-radius: 16px;
+  }
+
+  .link-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    font-size: 1.1rem;
+  }
+
+  .profile-name {
+    font-size: 1.45rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .profile-page {
+    padding: 4rem 2rem 5rem;
+  }
+
+  .profile-card {
+    padding: 3rem 2.5rem 2.5rem;
+  }
+
+  .orb-1 {
+    width: 500px;
+    height: 500px;
+  }
+
+  .orb-2 {
+    width: 380px;
+    height: 380px;
+  }
+}
+
+/* ===== RTL Support ===== */
+:host {
+  direction: rtl;
+}
+
+.profile-handle {
+  direction: ltr;
+}
+
+.link-meta {
+  direction: ltr;
+}
+
+/* ===== Scrollbar styling ===== */
+.profile-page::-webkit-scrollbar {
+  width: 8px;
+}
+.profile-page::-webkit-scrollbar-track {
+  background: transparent;
+}
+.profile-page::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 8px;
+}
+.profile-page::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--brand) 50%, var(--border));
 }

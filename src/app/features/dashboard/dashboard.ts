@@ -25,6 +25,7 @@ export class DashboardComponent implements OnInit {
   readonly editMode = signal(false);
   readonly editName = signal('');
   readonly editBio = signal('');
+  readonly editAvatarUrl = signal('');
   readonly savingProfile = signal(false);
 
   readonly newTitle = signal('');
@@ -44,6 +45,7 @@ export class DashboardComponent implements OnInit {
     if (mine) {
       const list = await this.linksService.listByProfile(mine.id);
       this.links.set(list);
+      this.editAvatarUrl.set(mine.avatarUrl || '');
     }
     this.loading.set(false);
   }
@@ -73,6 +75,7 @@ export class DashboardComponent implements OnInit {
     if (!p) return;
     this.editName.set(p.displayName);
     this.editBio.set(p.bio);
+    this.editAvatarUrl.set(p.avatarUrl || '');
     this.editMode.set(true);
   }
 
@@ -89,6 +92,7 @@ export class DashboardComponent implements OnInit {
         ...p,
         displayName: this.editName().trim(),
         bio: this.editBio().trim(),
+        avatarUrl: this.editAvatarUrl().trim() || null,
       });
       this.profile.set(updated);
       this.editMode.set(false);
