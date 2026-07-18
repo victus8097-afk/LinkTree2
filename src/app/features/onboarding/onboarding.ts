@@ -6,6 +6,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { UiService } from '../../core/services/ui.service';
 
 type HandleStatus = 'idle' | 'invalid' | 'checking' | 'available' | 'taken';
+type Step = 'details' | 'confirm';
 
 @Component({
   selector: 'app-onboarding',
@@ -25,6 +26,7 @@ export class OnboardingComponent {
   readonly handleStatus = signal<HandleStatus>('idle');
   readonly submitting = signal(false);
   readonly error = signal<string | null>(null);
+  readonly step = signal<Step>('details');
 
   private checkTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -63,6 +65,15 @@ export class OnboardingComponent {
     );
   }
 
+  goToConfirm(): void {
+    if (!this.canSubmit) return;
+    this.step.set('confirm');
+  }
+
+  goBack(): void {
+    this.step.set('details');
+  }
+
   async submit(): Promise<void> {
     if (!this.canSubmit) return;
     this.submitting.set(true);
@@ -80,11 +91,16 @@ export class OnboardingComponent {
         bio: this.bio().trim(),
         email: user.email,
       });
+      this.ui.showToast('تم إنشاء صفحتك بنجاح! 🎉', 'success');
       this.router.navigate(['/dashboard']);
     } catch (err: unknown) {
       this.error.set(err instanceof Error ? err.message : 'تعذّر حفظ البيانات، حاول مرة أخرى.');
     } finally {
       this.submitting.set(false);
     }
+  }
+
+  initial(name: string): string {
+    return (name || '؟').trim().charAt(0) || '؟';
   }
 }

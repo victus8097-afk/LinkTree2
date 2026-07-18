@@ -69,6 +69,8 @@ export class ProfileService {
         bio: input.bio.trim(),
         email: input.email.trim().toLowerCase(),
         avatar_url: input.avatarUrl ?? null,
+        theme_color: input.themeColor ?? null,
+        bg_color: input.bgColor ?? null,
         verified: true,
       };
       const { data, error } = await this.supabase.client
@@ -86,6 +88,8 @@ export class ProfileService {
       bio: input.bio.trim(),
       email: input.email.trim().toLowerCase(),
       avatarUrl: input.avatarUrl ?? null,
+      themeColor: input.themeColor ?? null,
+      bgColor: input.bgColor ?? null,
       verified: true,
       createdAt: new Date().toISOString(),
     };
@@ -103,6 +107,8 @@ export class ProfileService {
           display_name: profile.displayName,
           bio: profile.bio,
           avatar_url: profile.avatarUrl ?? null,
+          theme_color: profile.themeColor ?? null,
+          bg_color: profile.bgColor ?? null,
         })
         .eq('id', profile.id)
         .select()

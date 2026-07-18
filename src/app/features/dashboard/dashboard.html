@@ -8,13 +8,54 @@
       <button class="btn btn--primary" type="button" (click)="copyLink()">
         @if (copied()) { ✔ تم النسخ } @else { 📋 نسخ رابط صفحتي }
       </button>
-      <a class="btn btn--ghost" [href]="profileLink" target="_blank" rel="noopener">👁 معاينة الصفحة</a>
+      <a class="btn btn--ghost" [href]="profileLink()" target="_blank" rel="noopener">👁 معاينة</a>
     </div>
   </div>
 
   @if (loading()) {
-    <div class="state"><span class="spinner"></span> جارٍ التحميل…</div>
+    <div class="state">
+      <span class="spinner"></span>
+      <span>جارٍ التحميل…</span>
+    </div>
   } @else if (profile(); as p) {
+
+    <!-- QR + Stats row -->
+    <div class="dash__extras">
+      <!-- QR Code -->
+      <div class="card card--compact qr-card">
+        <div class="card__head">
+          <h3>🖼 رمز QR</h3>
+        </div>
+        <div class="qr-card__body">
+          <img
+            class="qr-img"
+            [src]="qrCodeUrl()"
+            alt="رمز QR لصفحتك"
+            width="140"
+            height="140"
+            loading="lazy"
+          />
+          <p class="qr-hint">امسح الكود للوصول إلى صفحتك</p>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="card card--compact stats-card">
+        <div class="card__head">
+          <h3>📊 إحصائيات</h3>
+        </div>
+        <div class="stats-card__body">
+          <div class="stat">
+            <span class="stat__num">{{ totalClicks() }}</span>
+            <span class="stat__label">نقرة</span>
+          </div>
+          <div class="stat">
+            <span class="stat__num">{{ links().length }}</span>
+            <span class="stat__label">رابط</span>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div class="grid">
       <!-- Profile summary -->
@@ -58,14 +99,40 @@
             <label class="field">
               <span>رابط الصورة الشخصية</span>
               <input
-                type="url"
-                name="avatarUrl"
-                [(ngModel)]="editAvatarUrl"
-                placeholder="https://example.com/avatar.jpg"
-                dir="ltr"
+                type="url" name="avatarUrl" [(ngModel)]="editAvatarUrl"
+                placeholder="https://example.com/avatar.jpg" dir="ltr"
               />
               <small class="field__hint">اتركه فارغاً لاستخدام الحرف الأول من اسمك</small>
             </label>
+
+            <!-- Theme customization -->
+            <details class="theme-toggle">
+              <summary>🎨 تخصيص المظهر</summary>
+              <div class="theme-fields">
+                <label class="field">
+                  <span>لون التدرج</span>
+                  <div class="color-row">
+                    <input type="color" name="themeColor" [(ngModel)]="editThemeColor" />
+                    <input
+                      type="text" name="themeColorHex" [(ngModel)]="editThemeColor"
+                      placeholder="#a855f7" dir="ltr"
+                    />
+                  </div>
+                  <small class="field__hint">مثلاً #a855f7 أو اتركه فارغاً للون الافتراضي</small>
+                </label>
+                <label class="field">
+                  <span>لون الخلفية</span>
+                  <div class="color-row">
+                    <input type="color" name="bgColor" [(ngModel)]="editBgColor" />
+                    <input
+                      type="text" name="bgColorHex" [(ngModel)]="editBgColor"
+                      placeholder="#0b0617" dir="ltr"
+                    />
+                  </div>
+                </label>
+              </div>
+            </details>
+
             <div class="row">
               <button class="btn btn--primary btn--sm" type="submit" [disabled]="savingProfile()">
                 @if (savingProfile()) { <span class="spinner spinner--sm"></span> حفظ } @else { حفظ }
@@ -82,6 +149,12 @@
             @if (p.avatarUrl) {
               <div><dt>الصورة</dt><dd><img [src]="p.avatarUrl" alt="" class="avatar-preview" /></dd></div>
             }
+            @if (p.themeColor) {
+              <div>
+                <dt>اللون</dt>
+                <dd><span class="color-swatch" [style.background]="p.themeColor"></span></dd>
+              </div>
+            }
           </dl>
         }
       </div>
@@ -91,23 +164,21 @@
     <div class="card links">
       <div class="card__head">
         <h3>روابطي ({{ links().length }})</h3>
+        <div class="card__head-actions">
+          <button class="btn btn--ghost btn--sm" type="button" (click)="toggleAnalytics()">
+            {{ showAnalytics() ? '📊 إخفاء الإحصائيات' : '📊 عرض الإحصائيات' }}
+          </button>
+        </div>
       </div>
 
       <form class="link-form" (ngSubmit)="addLink()" #lf="ngForm">
         <input
-          type="text"
-          name="title"
-          [(ngModel)]="newTitle"
-          placeholder="عنوان الرابط (مثال: معرض أعمالي)"
-          aria-label="عنوان الرابط"
+          type="text" name="title" [(ngModel)]="newTitle"
+          placeholder="عنوان الرابط" aria-label="عنوان الرابط"
         />
         <input
-          type="text"
-          name="url"
-          [(ngModel)]="newUrl"
-          placeholder="الرابط (مثال: behance.net/maryam)"
-          aria-label="الرابط"
-          dir="ltr"
+          type="text" name="url" [(ngModel)]="newUrl"
+          placeholder="الرابط" aria-label="الرابط" dir="ltr"
         />
         <button class="btn btn--primary" type="submit" [disabled]="adding()">
           @if (adding()) { <span class="spinner spinner--sm"></span> } @else { + إضافة }
@@ -119,20 +190,56 @@
       }
 
       <ul class="link-list">
-        @for (link of links(); track link.id) {
-          <li class="link-item">
-            <div class="link-item__text">
-              <span class="link-item__title">{{ link.title }}</span>
-              <span class="link-item__url">{{ link.url }}</span>
+        @for (link of links(); track link.id; let i = $index) {
+          <li
+            class="link-item"
+            draggable="true"
+            (dragstart)="onDragStart(i)"
+            (dragover)="onDragOver($event, i)"
+            (dragend)="onDragEnd()"
+          >
+            <div class="link-item__handle" title="اسحب للترتيب">
+              <span class="handle-bars">⠿</span>
             </div>
-            <button class="btn btn--danger btn--sm" type="button" (click)="removeLink(link.id)">حذف</button>
+
+            @if (link._editing) {
+              <div class="link-item__edit">
+                <input type="text" [(ngModel)]="link._editTitle" placeholder="العنوان" />
+                <input type="text" [(ngModel)]="link._editUrl" placeholder="الرابط" dir="ltr" />
+                <div class="link-item__edit-actions">
+                  <button class="btn btn--primary btn--sm" type="button" (click)="saveEditLink(link)">✔</button>
+                  <button class="btn btn--ghost btn--sm" type="button" (click)="cancelEditLink(link)">✕</button>
+                </div>
+              </div>
+            } @else {
+              <div class="link-item__text">
+                <span class="link-item__title">{{ link.title }}</span>
+                <span class="link-item__url">{{ getDomain(link.url) }}</span>
+              </div>
+
+              <div class="link-item__actions">
+                @if (showAnalytics()) {
+                  <span class="link-item__clicks" title="نقرات">
+                    👁 {{ clickStats()[link.id] || 0 }}
+                  </span>
+                }
+                <button class="btn-icon" type="button" title="تحريك لأعلى" (click)="moveLink(link.id, 'up')">▲</button>
+                <button class="btn-icon" type="button" title="تحريك لأسفل" (click)="moveLink(link.id, 'down')">▼</button>
+                <button class="btn-icon" type="button" title="تعديل" (click)="startEditLink(link)">✎</button>
+                <button class="btn-icon btn-icon--danger" type="button" title="حذف" (click)="removeLink(link.id)">🗑</button>
+              </div>
+            }
           </li>
         } @empty {
-          <li class="empty">لا توجد روابط بعد — أضف أول رابط يصل زوّارك بما تقدّمه.</li>
+          <li class="empty">
+            <span class="empty__icon">🔗</span>
+            <p>لا توجد روابط بعد</p>
+            <small>أضف رابطك الأول ليصل زوّارك إلى كل ما تقدّمه</small>
+          </li>
         }
       </ul>
     </div>
 
-    <button class="btn btn--ghost logout" type="button" (click)="logout()">تسجيل الخروج</button>
+    <button class="btn btn--ghost logout" type="button" (click)="logout()">🚪 تسجيل الخروج</button>
   }
 </section>
