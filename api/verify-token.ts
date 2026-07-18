@@ -3,16 +3,13 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 const TOKEN_SECRET =
   process.env['RESEND_API_KEY'] || process.env['SUPABASE_SERVICE_ROLE_KEY'] || 'wasla-local-secret';
 
-// ---------------------------------------------------------------------------
-// helpers
-// ---------------------------------------------------------------------------
+// ---------- helpers ----------
 
 function hmacVerify(payload: string, signature: string, secret: string): boolean {
   const { createHmac } = require('crypto') as typeof import('crypto');
   const expected = createHmac('sha256', secret).update(payload).digest('base64url');
   let ok = signature.length === expected.length;
   if (ok) {
-    // constant-time comparison
     let diff = 0;
     for (let i = 0; i < signature.length; i++) {
       diff |= signature.charCodeAt(i) ^ expected.charCodeAt(i);
@@ -22,9 +19,7 @@ function hmacVerify(payload: string, signature: string, secret: string): boolean
   return ok;
 }
 
-// ---------------------------------------------------------------------------
-// handler
-// ---------------------------------------------------------------------------
+// ---------- handler ----------
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');

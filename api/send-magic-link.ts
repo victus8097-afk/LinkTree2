@@ -1,19 +1,30 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { Resend } from 'resend';
 
+// ---------- env ----------
 const RESEND_API_KEY = process.env['RESEND_API_KEY'] || '';
+const RESEND_FROM = process.env['RESEND_FROM'] || '';
 const SUPABASE_URL = process.env['SUPABASE_URL'] || '';
 const SUPABASE_SERVICE_KEY = process.env['SUPABASE_SERVICE_ROLE_KEY'] || '';
-const APP_URL = process.env['APP_URL'] || 'http://localhost:4200';
 
-// ---------------------------------------------------------------------------
-// helpers
-// ---------------------------------------------------------------------------
+// ---------- helpers ----------
 
-function createHmac(secret: string): {
-  sign: (payload: string) => string;
-  verify: (payload: string, signature: string) => boolean;
-} {
+/** يكتشف رابط التطبيق تلقائياً — يدعم Vercel و Coolify و Heroku وأي host آخر. */
+function detectAppUrl(req: VercelRequest): string {
+  // Vercel يُدخل VERCEL_URL تلقائياً (مثلاً myproject.vercel.app)
+  const vercelUrl = process.env['VERCEL_URL'];
+  if (vercelUrl) return `https://${vercelUrl}`;
+
+  // Coolify أو أي host آخر: نستخدم الهيدر
+  const host = req.headers['host'] || '';
+  const proto = req.headers['x-forwarded-proto'] || 'https';
+  if (host) return `${proto}://${host}`;
+
+  // آخر رجوع
+  return process.env['APP_URL'] || 'http://localhost:4200';
+}
+
+function createHmac(secret: string) {
   const { createHmac, timingSafeEqual } = require('crypto') as typeof import('crypto');
   return {
     sign(payload: string) {
@@ -36,7 +47,7 @@ function signToken(email: string, secret: string): string {
   return `${encoded}.${hmac.sign(encoded)}`;
 }
 
-async function getSupabaseMagicLink(email: string): Promise<string | null> {
+async function getSupabaseMagicLink(email: string, redirectTo: string): Promise<string | null> {
   if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) return null;
   try {
     const resp = await fetch(`${SUPABASE_URL}/auth/v1/admin/generate_link`, {
@@ -46,7 +57,11 @@ async function getSupabaseMagicLink(email: string): Promise<string | null> {
         Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
         apikey: SUPABASE_SERVICE_KEY,
       },
-      body: JSON.stringify({ type: 'magiclink', email, options: { redirectTo: `${APP_URL}/dashboard` } }),
+      body: JSON.stringify({
+        type: 'magiclink',
+        email,
+        options: { redirectTo: `${redirectTo}/dashboard` },
+      }),
     });
     if (!resp.ok) return null;
     const data = (await resp.json()) as { properties?: { action_link?: string } };
@@ -70,12 +85,18 @@ function buildEmailHtml(link: string): string {
     </div>`;
 }
 
-// ---------------------------------------------------------------------------
-// handler
-// ---------------------------------------------------------------------------
+function resolveFromAddress(req: VercelRequest): string {
+  if (RESEND_FROM) return RESEND_FROM;
+
+  const host = req.headers['host'] || '';
+  if (host) return `Wasla <noreply@${host}>`;
+
+  return 'Wasla <noreply@wasla.app>';
+}
+
+// ---------- handler ----------
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -90,29 +111,31 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const normalized = email.trim().toLowerCase();
+    const appUrl = detectAppUrl(req);
 
-    // 1) Try Supabase admin magic link (Resend just delivers it)
-    let magicLink = await getSupabaseMagicLink(normalized);
+    // 1) جرّب Supabase admin magic link (Resend يوصّله فقط)
+    let magicLink = await getSupabaseMagicLink(normalized, appUrl);
 
-    // 2) Fallback: own signed token
+    // 2) رجوع: رمز موقّع ذاتياً (HMAC — لا يحتاج قاعدة بيانات)
     const tokenSecret = RESEND_API_KEY || SUPABASE_SERVICE_KEY || 'wasla-local-secret';
     if (!magicLink) {
       const token = signToken(normalized, tokenSecret);
-      magicLink = `${APP_URL}/auth?token=${encodeURIComponent(token)}`;
+      magicLink = `${appUrl}?token=${encodeURIComponent(token)}`;
     }
 
-    // 3) Send via Resend (or return link in demo mode)
+    // 3) إرسال عبر Resend
     if (!RESEND_API_KEY) {
+      // لا يوجد Resend — نرجع الرابط مباشرة (مفيد للتطوير)
       return res.status(200).json({
         success: true,
-        message: 'وضع العرض — تم إنشاء رابط الدخول (بدون خادم بريد).',
+        message: 'وضع التطوير — تم إنشاء رابط الدخول (بدون خادم بريد).',
         link: magicLink,
       });
     }
 
     const resendClient = new Resend(RESEND_API_KEY);
     const { error } = await resendClient.emails.send({
-      from: 'Wasla <noreply@wasla.app>',
+      from: resolveFromAddress(req),
       to: normalized,
       subject: 'رابط الدخول إلى وصلة',
       html: buildEmailHtml(magicLink),
@@ -123,7 +146,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(500).json({ error: 'تعذّر إرسال البريد الإلكتروني.' });
     }
 
-    return res.status(200).json({ success: true, message: 'تم إرسال رابط الدخول إلى بريدك الإلكتروني.' });
+    return res.status(200).json({
+      success: true,
+      message: 'تم إرسال رابط الدخول إلى بريدك الإلكتروني.',
+    });
   } catch (err: unknown) {
     console.error('send-magic-link error:', err);
     return res.status(500).json({ error: 'خطأ غير متوقع.' });
