@@ -1,10 +1,9 @@
-import { Component, OnInit, inject, signal, computed, effect } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ProfileService } from '../../core/services/profile.service';
 import { LinkService } from '../../core/services/link.service';
 import { Profile } from '../../core/models/profile.model';
 import { Link } from '../../core/models/link.model';
-import { CommonModule } from '@angular/common';
 
 interface LinkWithIcon extends Link {
   icon: string;
@@ -13,7 +12,7 @@ interface LinkWithIcon extends Link {
 
 @Component({
   selector: 'app-public-profile',
-  imports: [RouterLink, CommonModule],
+  imports: [RouterLink],
   templateUrl: './public-profile.html',
   styleUrl: './public-profile.scss',
 })
