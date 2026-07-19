@@ -1,0 +1,19 @@
+{
+  "name": "وصلة | Wasla",
+  "short_name": "وصلة",
+  "description": "اجمع كل روابطك في صفحة واحدة",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b0617",
+  "theme_color": "#a855f7",
+  "orientation": "any",
+  "dir": "rtl",
+  "lang": "ar",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    }
+  ]
+}

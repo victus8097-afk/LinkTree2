@@ -4,10 +4,36 @@
     <div class="orb orb-2"></div>
   </div>
 
-  @if (loading()) {
-    <div class="state">
-      <span class="spinner"></span>
-      <span>جاري التحميل…</span>
+  <!-- Password gate -->
+  @if (passwordRequired() && profile(); as p) {
+    <div class="password-gate">
+      <div class="password-gate__card">
+        <span class="password-gate__icon">🔒</span>
+        <h1>{{ p.displayName }}</h1>
+        <p>هذه الصفحة محمية بكلمة مرور</p>
+        <form (ngSubmit)="unlock()">
+          <input
+            type="password"
+            [(ngModel)]="password"
+            name="pwd"
+            placeholder="أدخل كلمة المرور"
+            dir="ltr"
+            autofocus
+            [class.error]="passwordError()"
+          />
+          @if (passwordError()) {
+            <small class="pw-error">كلمة المرور غير صحيحة</small>
+          }
+          <button class="btn btn--primary btn--block" type="submit">دخول</button>
+        </form>
+        <a class="password-gate__brand" routerLink="/">🔗 وصلة</a>
+      </div>
+    </div>
+  } @else if (loading()) {
+    <div class="profile-container">
+      <div class="skeleton-profile">
+        <app-skeleton variant="card" height="420px" />
+      </div>
     </div>
   } @else if (error()) {
     <div class="error-state">
@@ -26,7 +52,11 @@
     </div>
   } @else if (profile(); as p) {
     <div class="profile-container">
-      <article class="profile-card">
+      <article
+        class="profile-card"
+        [style.--theme]="p.themeColor || 'var(--brand)'"
+        [style.--theme-gradient]="activeTemplate()?.gradient || 'linear-gradient(135deg, ' + (p.themeColor || '#a855f7') + ' 0%, ' + (p.themeColor || '#6366f1') + ' 100%)'"
+      >
         <header class="profile-header">
           <div class="avatar-wrapper">
             @if (getProfileImage(); as avatarUrl) {
@@ -47,10 +77,37 @@
           }
         </header>
 
+        <!-- Share bar -->
+        <div class="profile-actions">
+          <button class="btn btn--ghost btn--sm" (click)="copyProfileLink()">
+            {{ copied() ? '✔ تم النسخ' : '📋 نسخ الرابط' }}
+          </button>
+          <button class="btn btn--ghost btn--sm" (click)="toggleShare()">📤 مشاركة</button>
+        </div>
+
+        <!-- Share modal -->
+        @if (showShare()) {
+          <div class="share-overlay" (click)="toggleShare()">
+            <div class="share-card" (click)="$event.stopPropagation()">
+              <h4>شارك الصفحة</h4>
+              <div class="share-btns">
+                <button class="share-btn" (click)="shareTo('twitter')">𝕏 تويتر</button>
+                <button class="share-btn" (click)="shareTo('whatsapp')">💬 واتساب</button>
+                <button class="share-btn" (click)="shareTo('telegram')">📩 تيليجرام</button>
+              </div>
+              <div class="share-qr">
+                <img [src]="qrCodeUrl()" alt="QR" width="140" height="140" loading="lazy" />
+                <small>امسح الكود</small>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Links -->
         <section class="links-section" aria-label="الروابط">
           <ul class="links-list" role="list">
             @for (link of linksWithIcons(); track link.id; let i = $index) {
-              <li class="link-item" style="animation-delay: {{ i * 50 }}ms">
+              <li class="link-item" [style.animation-delay]="i * 50 + 'ms'">
                 <a
                   class="link-btn"
                   [href]="link.url"
@@ -59,12 +116,10 @@
                   (click)="trackClick(link)"
                   [attr.aria-label]="link.title + ', يفتح في تبويب جديد'"
                 >
-                  <span class="link-icon" [class.brand-icon]="link.iconType === 'brand'">
-                    {{ link.icon }}
-                  </span>
+                  <span class="link-icon" [class.brand-icon]="link.iconType === 'brand'">{{ link.icon }}</span>
                   <div class="link-content">
                     <span class="link-title">{{ link.title }}</span>
-                    <span class="link-meta">{{ getDomain(link.url) }}</span>
+                    <span class="link-meta">{{ link.domain }}</span>
                   </div>
                   <span class="link-arrow" aria-hidden="true">←</span>
                 </a>
@@ -73,7 +128,6 @@
               <li class="links-empty">
                 <span class="empty-icon">🔗</span>
                 <p>لا توجد روابط معروضة بعد</p>
-                <small>سيظهر هنا روابط الملف الشخصي عند إضافتها</small>
               </li>
             }
           </ul>

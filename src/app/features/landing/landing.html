@@ -1,6 +1,6 @@
+<!-- ===== Hero ===== -->
 <section class="hero">
   <div class="hero__bg" aria-hidden="true"></div>
-
   <div class="hero__content">
     <span class="badge">✨ منصة عربية لربط كل محتواك</span>
     <h1>
@@ -12,19 +12,17 @@
       وصلة تتيح لك تجميع روابطك ومنصاتك وأعمالك في رابط شخصي أنيق واحد، تشاركه بسهولة من
       إنستغرام وتويتر وتيك توك وكل مكان.
     </p>
-
     <div class="hero__cta">
       @if (!auth.isAuthenticated()) {
         <button class="btn btn--primary btn--lg" type="button" (click)="ui.openAuthModal()">
-          أنشئ صفحتك مجاناً
+          أنشئ صفحتك مجاناً 🚀
         </button>
       } @else {
         <a class="btn btn--primary btn--lg" routerLink="/onboarding">أنشئ صفحتك</a>
       }
       <a class="btn btn--ghost btn--lg" href="#features">تعرف على المميزات</a>
     </div>
-
-    <p class="hero__note">بدون بطاقة ائتمان • بدون كلمات مرور معقدة</p>
+    <p class="hero__note">بدون بطاقة ائتمان • بدون كلمات مرور معقدة • إعداد في دقيقة</p>
   </div>
 
   <div class="hero__mock" aria-hidden="true">
@@ -34,7 +32,7 @@
         <div class="phone__avatar">م</div>
         <div class="phone__name">مريم أحمد</div>
         <div class="phone__verified">✔ موثّقة</div>
-        <p class="phone__bio">مصممة جرافيك ومدربة فنون رقمية 🎨 أشارك هنا كل ما أبدعه.</p>
+        <p class="phone__bio">مصممة جرافيك ومدربة فنون رقمية 🎨</p>
         <div class="phone__links">
           <span class="phone__link">📸 معرض أعمالي</span>
           <span class="phone__link">▶️ قناتي على يوتيوب</span>
@@ -45,53 +43,62 @@
       </div>
     </div>
   </div>
-
-  <!-- TEST: visible indicator -->
-  <div style="position:fixed; top:10px; right:10px; background:red; color:white; padding:10px; z-index:9999; font-size:14px;">✅ Landing Loaded</div>
 </section>
 
+<!-- ===== Stats strip ===== -->
+<section class="stats-strip">
+  <div class="stats-strip__inner">
+    <div class="stat-item">
+      <span class="stat-item__num"><app-count-up [end]="1240" [duration]="2000" suffix="+" /></span>
+      <span class="stat-item__label">مستخدم نشط</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-item__num"><app-count-up [end]="8500" [duration]="2000" suffix="+" /></span>
+      <span class="stat-item__label">رابط مُنشأ</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-item__num"><app-count-up [end]="320" [duration]="2000" suffix="K+" /></span>
+      <span class="stat-item__label">نقرة شهرية</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-item__num">100<span class="stat-item__small">%</span></span>
+      <span class="stat-item__label">مجاني</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Features ===== -->
 <section id="features" class="section">
   <div class="section__head">
+    <span class="badge">🎯 المميزات</span>
     <h2>لماذا وصلة؟</h2>
     <p>كل ما تحتاجه لحضور رقمي موحّد، بأقل جهد.</p>
   </div>
 
   <div class="grid grid--3">
-    <article class="card-feature">
-      <div class="card-feature__icon">🎨</div>
-      <h3>تصميم يشبهك</h3>
-      <p>واجهة عربية أنيقة تدعم الاتجاه من اليمين لليسار، بخط Alexandria المميز وتأثيرات عصرية.</p>
-    </article>
-    <article class="card-feature">
-      <div class="card-feature__icon">🔗</div>
-      <h3>نظّم روابطك</h3>
-      <p>أضف كل روابطك ومنصاتك وأعمالك في مكان واحد، ورتّبها كما تشاء بسهولة.</p>
-    </article>
-    <article class="card-feature">
-      <div class="card-feature__icon">📲</div>
-      <h3>شارك بضغطة</h3>
-      <p>رابط شخصي فريد مثل <code>wasla.app/maryam</code> تضعه في سيرتك الذاتية وكل حساباتك.</p>
-    </article>
-    <article class="card-feature">
-      <div class="card-feature__icon">🔒</div>
-      <h3>دخول آمن</h3>
-      <p>تسجيل دخول عبر البريد برابط سحري (Magic Link) — بلا كلمات مرور تُنسى.</p>
-    </article>
-    <article class="card-feature">
-      <div class="card-feature__icon">⚡</div>
-      <h3>سريع ومتجاوب</h3>
-      <p>صفحتك تبدو رائعة على الجوال والحاسوب، وتُحمَّل بسرعة على أي جهاز.</p>
-    </article>
-    <article class="card-feature">
-      <div class="card-feature__icon">📊</div>
-      <h3>تحكّم كامل</h3>
-      <p>عدّل بياناتك وروابطك في أي وقت من لوحة تحكم بسيطة وسهلة.</p>
-    </article>
+    @for (feat of [
+      {icon:'🎨', title:'تصميم يشبهك', desc:'واجهة عربية أنيقة تدعم RTL بالكامل، بخط Alexandria المميز وتأثيرات عصرية وقوالب متعددة.'},
+      {icon:'🔗', title:'نظّم روابطك', desc:'أضف كل روابطك ومنصاتك وأعمالك في مكان واحد، صنّفها ورتّبها بالسحب والإفلات.'},
+      {icon:'📲', title:'شارك بضغطة', desc:'رابط شخصي فريد مثل wasla.app/اسمك تضعه في سيرتك الذاتية وكل حساباتك.'},
+      {icon:'🔒', title:'دخول آمن', desc:'Magic Link عبر البريد بدون كلمات مرور — مع إمكانية حماية صفحتك بكلمة مرور خاصة.'},
+      {icon:'⚡', title:'سريع ومتجاوب', desc:'صفحتك تبدو رائعة على الجوال والحاسوب، وتُحمَّل بسرعة على أي جهاز.'},
+      {icon:'📊', title:'تحليلات وإحصائيات', desc:'تعرّف على عدد النقرات والمشاهدات لتعرف أي روابطك الأكثر جذباً.'}
+    ]; track feat.title) {
+      <app-tilt-card>
+        <article class="card-feature">
+          <div class="card-feature__icon">{{ feat.icon }}</div>
+          <h3>{{ feat.title }}</h3>
+          <p>{{ feat.desc }}</p>
+        </article>
+      </app-tilt-card>
+    }
   </div>
 </section>
 
+<!-- ===== How it works ===== -->
 <section id="how" class="section section--alt">
   <div class="section__head">
+    <span class="badge">🛠️ البداية</span>
     <h2>كيف تعمل وصلة؟</h2>
     <p>ثلاث خطوات بسيطة وتصبح جاهزاً.</p>
   </div>
@@ -102,11 +109,13 @@
       <h3>سجّل دخولك</h3>
       <p>أدخل بريدك الإلكتروني وستصلك رسالة برابط دخول آمن — بلا كلمة مرور.</p>
     </div>
+    <div class="step step--arrow">→</div>
     <div class="step">
       <div class="step__num">٢</div>
       <h3>خصّص صفحتك</h3>
-      <p>اختر اسمك ورابطك الخاص ونبذة عنك، ثم أضف كل روابطك ومنصاتك.</p>
+      <p>اختر اسمك ورابطك ونبذة عنك، ثم أضف كل روابطك وصنّفها كما تشاء.</p>
     </div>
+    <div class="step step--arrow">→</div>
     <div class="step">
       <div class="step__num">٣</div>
       <h3>شارك رابطك</h3>
@@ -116,9 +125,87 @@
 
   <div class="section__cta">
     @if (!auth.isAuthenticated()) {
-      <button class="btn btn--primary btn--lg" type="button" (click)="ui.openAuthModal()">
-        ابدأ الآن — مجاناً
-      </button>
+      <button class="btn btn--primary btn--lg" type="button" (click)="ui.openAuthModal()">ابدأ الآن — مجاناً 🚀</button>
+    } @else {
+      <a class="btn btn--primary btn--lg" routerLink="/onboarding">أنشئ صفحتك</a>
+    }
+  </div>
+</section>
+
+<!-- ===== Templates preview ===== -->
+<section id="templates" class="section">
+  <div class="section__head">
+    <span class="badge">🎨 تخصيص كامل</span>
+    <h2>قوالب جاهزة تناسب ذوقك</h2>
+    <p>اختر من بين قوالب متعددة أو خصّص ألوانك بنفسك.</p>
+  </div>
+  <div class="template-showcase">
+    @for (t of [
+      {color:'#a855f7', bg:'#0b0617', label:'البنفسجي'},
+      {color:'#06b6d4', bg:'#0a1628', label:'المحيط'},
+      {color:'#f97316', bg:'#1a0f08', label:'الغروب'},
+      {color:'#22c55e', bg:'#0a140b', label:'الغابة'},
+      {color:'#ec4899', bg:'#140a10', label:'الوردي'}
+    ]; track t.label) {
+      <div class="template-card" [style.--t-color]="t.color" [style.--t-bg]="t.bg">
+        <div class="template-card__inner">
+          <div class="template-dot" [style.background]="'linear-gradient(135deg, ' + t.color + ', ' + t.color + '88)'"></div>
+          <div class="template-bar"></div>
+          <div class="template-bar" style="width:75%"></div>
+          <div class="template-bar" style="width:60%"></div>
+          <div class="template-bar" style="width:90%"></div>
+        </div>
+        <span class="template-label">{{ t.label }}</span>
+      </div>
+    }
+  </div>
+</section>
+
+<!-- ===== Testimonials ===== -->
+<section class="section section--alt">
+  <div class="section__head">
+    <span class="badge">💬 آراء المستخدمين</span>
+    <h2>ماذا يقول مستخدمونا؟</h2>
+  </div>
+  <div class="testimonials">
+    @for (t of testimonials; track t.name) {
+      <div class="testimonial">
+        <p class="testimonial__text">"{{ t.text }}"</p>
+        <div class="testimonial__author">
+          <span class="testimonial__avatar">{{ t.name.charAt(0) }}</span>
+          <div>
+            <strong>{{ t.name }}</strong>
+            <span>{{ t.role }}</span>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</section>
+
+<!-- ===== FAQ ===== -->
+<section id="faq" class="section">
+  <div class="section__head">
+    <span class="badge">❓ الأسئلة الشائعة</span>
+    <h2>كل ما تريد معرفته</h2>
+  </div>
+  <div class="faq">
+    @for (item of faqs; track item.q) {
+      <details class="faq-item">
+        <summary>{{ item.q }}</summary>
+        <p>{{ item.a }}</p>
+      </details>
+    }
+  </div>
+</section>
+
+<!-- ===== Final CTA ===== -->
+<section class="section section--cta-final">
+  <div class="cta-final">
+    <h2>مستعد تبدأ؟</h2>
+    <p>أنشئ صفحتك الشخصية الآن واجمع كل روابطك في مكان واحد. مجاني تماماً.</p>
+    @if (!auth.isAuthenticated()) {
+      <button class="btn btn--primary btn--lg" type="button" (click)="ui.openAuthModal()">أنشئ صفحتك مجاناً 🚀</button>
     } @else {
       <a class="btn btn--primary btn--lg" routerLink="/onboarding">أنشئ صفحتك</a>
     }

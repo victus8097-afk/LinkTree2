@@ -5,7 +5,7 @@
 .onboarding {
   max-width: 560px;
   margin: 0 auto;
-  padding: 3.5rem 1.25rem 4rem;
+  padding: 3rem 1.25rem 4rem;
 }
 
 .onboarding__card {
@@ -33,6 +33,7 @@
   margin: 0;
 }
 
+/* ===== Handle field ===== */
 .handle {
   display: flex;
   align-items: center;
@@ -77,17 +78,128 @@
   font-weight: 700;
 }
 
-.handle__status .ok {
-  color: #2ecc71;
-}
-
-.handle__status .bad {
-  color: #ff6b6b;
-}
+.handle__status .ok { color: #2ecc71; }
+.handle__status .bad { color: #ff6b6b; }
 
 .hint {
   color: var(--muted);
   font-size: 0.78rem;
   display: block;
   margin-top: 0.35rem;
+}
+
+/* ===== Confirmation step ===== */
+.confirm {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.confirm__preview {
+  display: flex;
+  justify-content: center;
+}
+
+.preview-phone {
+  width: 200px;
+  aspect-ratio: 1 / 1.8;
+  background: linear-gradient(180deg, #1a1230, #0c0815);
+  border-radius: 24px;
+  border: 2px solid var(--border);
+  padding: 1.5rem 0.8rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.4rem;
+  overflow: hidden;
+}
+
+.preview-phone__avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--gradient);
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.4rem;
+  display: grid;
+  place-items: center;
+}
+
+.preview-phone__name {
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
+.preview-phone__handle {
+  color: var(--brand);
+  font-weight: 700;
+  font-size: 0.78rem;
+  direction: ltr;
+}
+
+.preview-phone__bio {
+  color: #c9c2da;
+  font-size: 0.7rem;
+  line-height: 1.5;
+  margin: 0;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.preview-phone__links {
+  margin-top: auto;
+  width: 100%;
+}
+
+.preview-link {
+  display: block;
+  padding: 0.5rem;
+  border-radius: 10px;
+  background: color-mix(in srgb, #ffffff 8%, transparent);
+  border: 1px solid color-mix(in srgb, #ffffff 12%, transparent);
+  color: #c9c2da;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+/* ===== KV ===== */
+.confirm__kv {
+  display: grid;
+  gap: 0.7rem;
+  margin: 0;
+}
+
+.confirm__kv > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px dashed var(--border);
+  padding-bottom: 0.5rem;
+}
+
+.confirm__kv dt {
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.confirm__kv dd {
+  margin: 0;
+  color: var(--text);
+  text-align: end;
+  word-break: break-word;
+  font-size: 0.9rem;
+}
+
+.ltr { direction: ltr; }
+
+/* ===== Actions ===== */
+.confirm__actions {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: center;
 }

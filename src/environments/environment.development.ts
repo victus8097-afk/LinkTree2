@@ -1,7 +1,15 @@
 // بيئة التطوير المحلية (ng serve).
+// تعمل في "وضع العرض التجريبي" (localStorage) افتراضياً — اختبر بحرية.
+//
+// لتفعيل Supabase محلياً: املأ المفاتيح أدناه.
+// لتفعيل Resend محلياً: شغّل خادم Vercel محلياً (`npx vercel dev`) وأضف RESEND_API_KEY.
 export const environment = {
   production: false,
-  appUrl: 'http://localhost:4200',
-  supabaseUrl: 'gdtkpdfcxqdnkyjlaupr.supabase.co',
-  supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdkdGtwZGZjeHFkbmt5amxhdXByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQzMDk3NTYsImV4cCI6MjA5OTg4NTc1Nn0.zPcyH0Kkft6aXmF6OCIAZq8XsudSgGN8YSG6rkxG0FY',
+  appUrl: '', // يُكتشف تلقائياً
+  supabaseUrl: '',
+  supabaseAnonKey: '',
+
+  // مثال: أزل التعليق وأضف مفاتيح Supabase لتجربة الاتصال الحقيقي
+  // supabaseUrl: 'https://xxxxx.supabase.co',
+  // supabaseAnonKey: 'eyJ...',
 };

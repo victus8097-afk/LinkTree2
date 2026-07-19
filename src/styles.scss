@@ -27,6 +27,8 @@ body {
 
 html {
   direction: rtl;
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
 }
 
 body {
@@ -130,7 +132,8 @@ code {
 }
 
 input,
-textarea {
+textarea,
+select {
   width: 100%;
   background: var(--bg);
   border: 1px solid var(--border);
@@ -176,6 +179,11 @@ textarea {
   border-color: color-mix(in srgb, #ff6b6b 45%, transparent);
   color: #ffc9c9;
 }
+.alert--info {
+  background: color-mix(in srgb, var(--brand) 16%, transparent);
+  border-color: color-mix(in srgb, var(--brand) 45%, transparent);
+  color: #d4bff9;
+}
 
 /* ===== الصور الرمزية ===== */
 .avatar {
@@ -203,6 +211,18 @@ textarea {
   font-size: 2.4rem;
 }
 
+/* ===== شارات ===== */
+.badge {
+  display: inline-block;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--brand);
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
 /* ===== مؤشر التحميل ===== */
 .spinner {
   width: 18px;
@@ -221,43 +241,23 @@ textarea {
 
 /* ===== حركات ===== */
 @keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+  to { transform: rotate(360deg); }
 }
 @keyframes fade {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 @keyframes pop {
-  from {
-    opacity: 0;
-    transform: translateY(10px) scale(0.97);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+  from { opacity: 0; transform: translateY(10px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 @keyframes rise {
-  from {
-    opacity: 0;
-    transform: translateY(18px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     animation-duration: 0.001ms !important;
     transition-duration: 0.001ms !important;
   }
@@ -279,4 +279,15 @@ textarea {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: color-mix(in srgb, var(--brand) 50%, var(--border));
+}
+
+/* ===== تفعيل مخفي ===== */
+details summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--text);
+  user-select: none;
+}
+details summary::marker {
+  color: var(--brand);
 }

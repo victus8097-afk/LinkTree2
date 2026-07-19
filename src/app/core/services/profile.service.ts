@@ -1,12 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { SupabaseService } from './supabase.service';
 import { AuthService } from './auth.service';
-import {
-  Profile,
-  ProfileInput,
-  ProfileRow,
-  mapProfile,
-} from '../models/profile.model';
+import { Profile, ProfileInput, ProfileRow, mapProfile } from '../models/profile.model';
 
 const LOCAL_PROFILES_KEY = 'wasla_profiles';
 
@@ -24,9 +19,13 @@ export class ProfileService {
         .eq('handle', h)
         .maybeSingle();
       if (error || !data) return null;
+      // increment view count
+      this.incrementViews(h);
       return mapProfile(data as ProfileRow);
     }
-    return this.localProfiles().find((p) => p.handle.toLowerCase() === h) ?? null;
+    const p = this.localProfiles().find((p) => p.handle.toLowerCase() === h) ?? null;
+    if (p) this.incrementViews(h);
+    return p;
   }
 
   async getMine(): Promise<Profile | null> {
@@ -69,7 +68,12 @@ export class ProfileService {
         bio: input.bio.trim(),
         email: input.email.trim().toLowerCase(),
         avatar_url: input.avatarUrl ?? null,
+        theme_color: input.themeColor ?? null,
+        bg_color: input.bgColor ?? null,
+        password: input.password ?? null,
+        template: input.template ?? null,
         verified: true,
+        views: 0,
       };
       const { data, error } = await this.supabase.client
         .from('profiles')
@@ -86,7 +90,12 @@ export class ProfileService {
       bio: input.bio.trim(),
       email: input.email.trim().toLowerCase(),
       avatarUrl: input.avatarUrl ?? null,
+      themeColor: input.themeColor ?? null,
+      bgColor: input.bgColor ?? null,
+      password: input.password ?? null,
+      template: input.template ?? null,
       verified: true,
+      views: 0,
       createdAt: new Date().toISOString(),
     };
     const all = this.localProfiles();
@@ -103,6 +112,10 @@ export class ProfileService {
           display_name: profile.displayName,
           bio: profile.bio,
           avatar_url: profile.avatarUrl ?? null,
+          theme_color: profile.themeColor ?? null,
+          bg_color: profile.bgColor ?? null,
+          password: profile.password ?? null,
+          template: profile.template ?? null,
         })
         .eq('id', profile.id)
         .select()
@@ -117,6 +130,24 @@ export class ProfileService {
       this.saveLocal(all);
     }
     return profile;
+  }
+
+  /** جلب ملفات شخصية (لأغراض إدارية - محلي فقط) */
+  getAllProfiles(): Profile[] {
+    if (this.supabase.isConfigured && this.supabase.client) {
+      return []; // Supabase fetch would require admin
+    }
+    return this.localProfiles();
+  }
+
+  /** زيادة عداد المشاهدات */
+  private incrementViews(handle: string): void {
+    const all = this.localProfiles();
+    const idx = all.findIndex((p) => p.handle.toLowerCase() === handle.toLowerCase());
+    if (idx >= 0) {
+      all[idx] = { ...all[idx], views: (all[idx].views || 0) + 1 };
+      this.saveLocal(all);
+    }
   }
 
   private localProfiles(): Profile[] {

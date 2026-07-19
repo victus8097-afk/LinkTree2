@@ -43,6 +43,8 @@ export class LinkService {
           title,
           url,
           position: await this.nextPosition(profileId),
+          category: input.category ?? null,
+          password: input.password ?? null,
         })
         .select()
         .single();
@@ -56,11 +58,65 @@ export class LinkService {
       url,
       position: await this.nextPosition(profileId),
       createdAt: new Date().toISOString(),
+      category: input.category ?? null,
+      password: input.password ?? null,
     };
     const all = this.localLinks();
     all.push(link);
     this.saveLocal(all);
     return link;
+  }
+
+  async update(link: Link): Promise<Link> {
+    if (this.supabase.isConfigured && this.supabase.client) {
+      const { data, error } = await this.supabase.client
+        .from('links')
+        .update({ title: link.title, url: link.url, position: link.position, category: link.category, password: link.password })
+        .eq('id', link.id)
+        .select()
+        .single();
+      if (error) throw error;
+      return mapLink(data as LinkRow);
+    }
+    const all = this.localLinks();
+    const idx = all.findIndex((l) => l.id === link.id);
+    if (idx >= 0) {
+      all[idx] = { ...link };
+      this.saveLocal(all);
+    }
+    return link;
+  }
+
+  /** إعادة ترتيب الروابط (مصفوفة من id بالترتيب الجديد). */
+  async reorder(profileId: string, orderedIds: string[]): Promise<void> {
+    // تحديث الموضع لكل رابط حسب الترتيب الجديد
+    const list = await this.listByProfile(profileId);
+    const idToLink = new Map(list.map((l) => [l.id, l]));
+
+    const updates = orderedIds
+      .map((id, index) => {
+        const link = idToLink.get(id);
+        return link ? { ...link, position: index } : null;
+      })
+      .filter((l): l is Link => l !== null);
+
+    if (this.supabase.isConfigured && this.supabase.client) {
+      // تحديث كل رابط على حدة
+      await Promise.all(
+        updates.map((link) =>
+          this.supabase.client!
+            .from('links')
+            .update({ position: link.position })
+            .eq('id', link.id),
+        ),
+      );
+      return;
+    }
+
+    // محلياً: استبدل القائمة كلها
+    const all = this.localLinks().filter((l) => l.profileId !== profileId);
+    all.push(...updates);
+    this.saveLocal(all);
   }
 
   async remove(linkId: string): Promise<void> {
@@ -103,6 +159,29 @@ export class LinkService {
         .insert({ link_id: linkId, clicked_at: new Date().toISOString() });
       if (error) console.warn('Failed to track click:', error);
     }
-    // في حالة التخزين المحلي، يمكن إضافة عداد للنقرات محلياً
+    // محلياً: تخزين العداد في localStorage
+    const key = `wasla_click_${linkId}`;
+    const raw = localStorage.getItem(key);
+    const count = raw ? parseInt(raw, 10) + 1 : 1;
+    localStorage.setItem(key, String(count));
+  }
+
+  /** جلب عدد النقرات لرابط (محلياً فقط) */
+  getClickCount(linkId: string): number {
+    const raw = localStorage.getItem(`wasla_click_${linkId}`);
+    return raw ? parseInt(raw, 10) : 0;
+  }
+
+  /** جلب إحصائيات كل روابط الملف الشخصي */
+  getClickStats(profileId: string): Record<string, number> {
+    const stats: Record<string, number> = {};
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key?.startsWith('wasla_click_')) {
+        const id = key.replace('wasla_click_', '');
+        stats[id] = parseInt(localStorage.getItem(key) || '0', 10);
+      }
+    }
+    return stats;
   }
 }

@@ -3,14 +3,19 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { UiService } from '../../../core/services/ui.service';
-import { SupabaseService } from '../../../core/services/supabase.service';
 
 @Component({
   selector: 'app-auth-modal',
   imports: [FormsModule],
   template: `
     @if (ui.authModalOpen()) {
-      <div class="overlay" (click)="onBackdrop($event)" role="dialog" aria-modal="true" aria-label="تسجيل الدخول">
+      <div
+        class="overlay"
+        (click)="onBackdrop($event)"
+        role="dialog"
+        aria-modal="true"
+        aria-label="تسجيل الدخول"
+      >
         <div class="card" (click)="$event.stopPropagation()">
           <button class="card__close" type="button" aria-label="إغلاق" (click)="close()">✕</button>
 
@@ -20,9 +25,15 @@ import { SupabaseService } from '../../../core/services/supabase.service';
             <p>أدخل بريدك الإلكتروني لإرسال رابط دخول آمن — بدون كلمات مرور.</p>
           </div>
 
-          @if (auth.message()?.type === 'success' && isSupabaseMode) {
+          @if (auth.message()?.type === 'success') {
             <div class="alert alert--success">
-              <strong>تم الإرسال!</strong> {{ auth.message()?.text }}
+              <strong>✔ تم الإرسال!</strong>
+              <p>{{ auth.message()?.text }}</p>
+              @if (auth.debugLink(); as link) {
+                <a class="debug-link" [href]="link" target="_blank" rel="noopener">
+                  🔗 افتح رابط الدخول (للتطوير)
+                </a>
+              }
             </div>
           } @else {
             <form class="form" (ngSubmit)="submit()" #f="ngForm">
@@ -43,7 +54,11 @@ import { SupabaseService } from '../../../core/services/supabase.service';
                 <div class="alert alert--error">{{ auth.message()?.text }}</div>
               }
 
-              <button class="btn btn--primary btn--block" type="submit" [disabled]="auth.loading()">
+              <button
+                class="btn btn--primary btn--block"
+                type="submit"
+                [disabled]="auth.loading()"
+              >
                 @if (auth.loading()) {
                   <span class="spinner"></span> جارٍ الإرسال…
                 } @else {
@@ -51,10 +66,6 @@ import { SupabaseService } from '../../../core/services/supabase.service';
                 }
               </button>
             </form>
-
-            @if (!isSupabaseMode) {
-              <p class="hint">🔧 تعمل المنصة الآن في <strong>وضع العرض التجريبي</strong> (بدون خادم). سيتم تسجيل دخولك فوراً لتجربة المنصة.</p>
-            }
           }
         </div>
       </div>
@@ -115,15 +126,24 @@ import { SupabaseService } from '../../../core/services/supabase.service';
         line-height: 1.6;
         margin: 0;
       }
-      .hint {
-        margin-top: 1rem;
-        font-size: 0.82rem;
-        color: var(--muted);
+      .alert p {
+        margin: 0.35rem 0 0;
+      }
+      .debug-link {
+        display: inline-block;
+        margin-top: 0.75rem;
+        color: var(--brand);
+        font-weight: 700;
+        font-size: 0.88rem;
+        text-decoration: none;
+        padding: 0.4rem 0.8rem;
         background: var(--surface-2);
+        border-radius: 8px;
         border: 1px dashed var(--border);
-        border-radius: 12px;
-        padding: 0.7rem 0.85rem;
-        line-height: 1.6;
+        word-break: break-all;
+      }
+      .debug-link:hover {
+        background: var(--bg);
       }
     `,
   ],
@@ -131,15 +151,14 @@ import { SupabaseService } from '../../../core/services/supabase.service';
 export class AuthModalComponent {
   readonly ui = inject(UiService);
   readonly auth = inject(AuthService);
-  private readonly supabase = inject(SupabaseService);
   private readonly router = inject(Router);
 
   readonly email = signal('');
-  readonly isSupabaseMode = this.supabase.isConfigured;
 
   close(): void {
     this.ui.closeAuthModal();
     this.auth.clearMessage();
+    this.auth.debugLink.set(null);
   }
 
   onBackdrop(event: MouseEvent): void {
@@ -150,8 +169,8 @@ export class AuthModalComponent {
     if (!this.email().trim()) return;
     await this.auth.sendMagicLink(this.email());
 
-    // في وضع العرض التجريبي يتم تسجيل الدخول فوراً.
-    if (this.auth.user()) {
+    // في وضع العرض التجريبي (localStorage) يتم تسجيل الدخول فوراً.
+    if (this.auth.user() && !this.auth.resendAvailable()) {
       this.email.set('');
       this.close();
       this.router.navigate(['/onboarding']);

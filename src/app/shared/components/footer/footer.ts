@@ -12,10 +12,24 @@ import { RouterLink } from '@angular/router';
           <span class="brand__name">وصلة</span>
           <p class="footer__tag">اجمع كل روابطك ومنصاتك في صفحة واحدة أنيقة.</p>
         </div>
-        <nav class="footer__links" aria-label="روابط التذييل">
-          <a routerLink="/" [fragment]="'features'">المميزات</a>
-          <a routerLink="/" [fragment]="'how'">كيفية العمل</a>
-          <a routerLink="/onboarding">أنشئ صفحتك</a>
+
+        <nav class="footer__col" aria-label="المنصة">
+          <strong>المنصة</strong>
+          <a routerLink="/" fragment="features">المميزات</a>
+          <a routerLink="/" fragment="how">كيفية العمل</a>
+          <a routerLink="/" fragment="faq">الأسئلة الشائعة</a>
+        </nav>
+
+        <nav class="footer__col" aria-label="روابط">
+          <strong>روابط</strong>
+          <a routerLink="/">الرئيسية</a>
+          <a href="https://github.com/victus8097-afk/LinkTree2" target="_blank" rel="noopener">GitHub</a>
+        </nav>
+
+        <nav class="footer__col" aria-label="قانوني">
+          <strong>قانوني</strong>
+          <a routerLink="/">الخصوصية</a>
+          <a routerLink="/">الشروط</a>
         </nav>
       </div>
       <div class="footer__bottom">
@@ -29,22 +43,20 @@ import { RouterLink } from '@angular/router';
       .footer {
         border-top: 1px solid var(--border);
         background: var(--surface);
-        margin-top: 4rem;
+        margin-top: auto;
       }
       .footer__inner {
         max-width: 1120px;
         margin: 0 auto;
         padding: 2.5rem 1.25rem 1.5rem;
-        display: flex;
-        flex-wrap: wrap;
+        display: grid;
+        grid-template-columns: 1.5fr 1fr 1fr 1fr;
         gap: 2rem;
-        justify-content: space-between;
       }
       .footer__brand {
         display: flex;
         flex-direction: column;
         gap: 0.5rem;
-        max-width: 320px;
       }
       .brand__name {
         font-weight: 800;
@@ -58,19 +70,26 @@ import { RouterLink } from '@angular/router';
         color: var(--muted);
         line-height: 1.7;
         margin: 0;
+        font-size: 0.9rem;
       }
-      .footer__links {
+      .footer__col {
         display: flex;
         flex-direction: column;
-        gap: 0.6rem;
+        gap: 0.5rem;
       }
-      .footer__links a {
+      .footer__col strong {
+        color: var(--text);
+        font-size: 0.9rem;
+        margin-bottom: 0.25rem;
+      }
+      .footer__col a {
         color: var(--muted);
         text-decoration: none;
-        font-weight: 600;
+        font-weight: 500;
+        font-size: 0.88rem;
         transition: color 0.2s ease;
       }
-      .footer__links a:hover {
+      .footer__col a:hover {
         color: var(--brand);
       }
       .footer__bottom {
@@ -84,6 +103,12 @@ import { RouterLink } from '@angular/router';
         justify-content: space-between;
         color: var(--muted);
         font-size: 0.85rem;
+      }
+
+      @media (max-width: 640px) {
+        .footer__inner {
+          grid-template-columns: 1fr 1fr;
+        }
       }
     `,
   ],
