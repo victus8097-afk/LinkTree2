@@ -230,3 +230,19 @@
   .link-item__actions { width: 100%; justify-content: flex-end; }
   .dash__bottom { flex-direction: column; align-items: flex-start; }
 }
+
+/* ===== Cover ===== */
+.profile__cover {
+  margin: -1.5rem -1.5rem 1rem;
+  border-radius: 20px 20px 0 0;
+  overflow: hidden;
+  height: 120px;
+}
+.profile__cover img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+
+/* ===== Pin ===== */
+.link-item__pin {
+  color: var(--brand); font-size: 0.85rem; flex-shrink: 0;
+}
