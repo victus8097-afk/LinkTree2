@@ -1,57 +1,55 @@
 <section class="profile-page">
-  <div class="bg-decoration" aria-hidden="true">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-  </div>
+  <div class="bg-decoration" aria-hidden="true"><div class="orb orb-1"></div><div class="orb orb-2"></div></div>
 
-  @if (loading()) {
-    <div class="state">
-      <span class="spinner"></span>
-      <span>جاري التحميل…</span>
+  @if (passwordRequired() && profile(); as p) {
+    <div class="password-gate">
+      <div class="password-gate__card">
+        <span class="password-gate__icon">🔒</span><h1>{{ p.displayName }}</h1><p>هذه الصفحة محمية بكلمة مرور</p>
+        <form (ngSubmit)="unlock()"><input type="password" [(ngModel)]="password" name="pwd" placeholder="كلمة المرور" dir="ltr" autofocus [class.error]="passwordError()"/>
+          @if(passwordError()){<small class="pw-error">كلمة مرور غير صحيحة</small>}
+          <button class="btn btn--primary btn--block" type="submit">دخول</button>
+        </form>
+        <a class="password-gate__brand" routerLink="/">🔗 وصلة</a>
+      </div>
     </div>
+  } @else if (loading()) {
+    <div class="profile-container"><div class="skeleton-profile"><app-skeleton variant="card" height="460px"/></div></div>
   } @else if (error()) {
-    <div class="error-state">
-      <div class="error-icon">⚠️</div>
-      <h1>تعذر التحميل</h1>
-      <p>{{ error() }}</p>
-      <button class="btn btn--primary" (click)="reload()">إعادة المحاولة</button>
-      <a class="btn btn--ghost" routerLink="/">العودة للرئيسية</a>
-    </div>
+    <div class="error-state"><div class="error-icon">⚠️</div><h1>تعذر التحميل</h1><p>{{ error() }}</p><button class="btn btn--primary" (click)="reload()">إعادة المحاولة</button><a class="btn btn--ghost" routerLink="/">العودة للرئيسية</a></div>
   } @else if (notFound()) {
-    <div class="not-found">
-      <div class="not-found__icon">🔍</div>
-      <h1>الصفحة غير موجودة</h1>
-      <p>ربما يكون الرابط خاطئاً أو أن الصفحة حُذفت.</p>
-      <a class="btn btn--primary" routerLink="/">العودة للرئيسية</a>
-    </div>
+    <div class="not-found"><div class="not-found__icon">🔍</div><h1>الصفحة غير موجودة</h1><p>ربما الرابط خاطئ أو الصفحة حُذفت.</p><a class="btn btn--primary" routerLink="/">العودة للرئيسية</a></div>
   } @else if (profile(); as p) {
     <div class="profile-container">
+<<<<<<< HEAD
       <article
         class="profile-card"
         [style.--theme]="p.themeColor || 'var(--brand)'"
         [style.--theme-bg]="p.bgColor || 'var(--bg)'"
         [style.--theme-gradient]="'linear-gradient(135deg, ' + (p.themeColor || '#a855f7') + ' 0%, ' + (p.themeColor || '#6366f1') + ' 100%)'"
       >
+=======
+      <article class="profile-card" [style.--theme]="p.themeColor||'var(--brand)'"
+        [style.--theme-gradient]="activeTemplate()?.gradient || 'linear-gradient(135deg, ' + (p.themeColor||'#a855f7') + ' 0%, ' + (p.themeColor||'#6366f1') + ' 100%)'">
+
+        <!-- Cover Image -->
+        @if (getCoverImage(); as cover) {
+          <div class="profile-cover"><img [src]="cover" alt="" loading="eager" class="cover-img"/></div>
+        }
+
+>>>>>>> 7520dfc138125112298cb2c79528ace99c8440d2
         <header class="profile-header">
           <div class="avatar-wrapper">
-            @if (getProfileImage(); as avatarUrl) {
-              <img [src]="avatarUrl" alt="" class="avatar avatar--xl" loading="lazy" />
-            } @else {
-              <span class="avatar avatar--xl">{{ initial(p.displayName) }}</span>
-            }
-            @if (p.verified) {
-              <span class="verified-badge" title="موثّق">✔</span>
-            }
+            @if (getProfileImage(); as av) { <img [src]="av" alt="" class="avatar avatar--xl" loading="lazy"/> }
+            @else { <span class="avatar avatar--xl">{{ initial(p.displayName) }}</span> }
+            @if(p.verified){<span class="verified-badge" title="موثّق">✔</span>}
           </div>
 
-          <h1 class="profile-name">{{ p.displayName }}</h1>
+          <h1 class="profile-name">{{ p.title || p.displayName }}</h1>
           <p class="profile-handle">wasla.app/{{ p.handle }}</p>
-
-          @if (p.bio) {
-            <p class="profile-bio">{{ p.bio }}</p>
-          }
+          @if(p.bio){<p class="profile-bio">{{ p.bio }}</p>}
         </header>
 
+<<<<<<< HEAD
         <!-- Share bar -->
         <div class="profile-actions">
           <button class="btn btn--ghost btn--sm" type="button" (click)="copyProfileLink()">
@@ -76,10 +74,24 @@
                 <img [src]="qrCodeUrl()" alt="QR code" width="140" height="140" loading="lazy" />
                 <small>امسح الكود</small>
               </div>
+=======
+        <div class="profile-actions">
+          <button class="btn btn--ghost btn--sm" (click)="copyProfileLink()">{{ copied()?'✔ تم النسخ':'📋 نسخ الرابط' }}</button>
+          <button class="btn btn--ghost btn--sm" (click)="toggleShare()">📤 مشاركة</button>
+        </div>
+
+        @if(showShare()){
+          <div class="share-overlay" (click)="toggleShare()">
+            <div class="share-card" (click)="$event.stopPropagation()">
+              <h4>شارك الصفحة</h4>
+              <div class="share-btns"><button class="share-btn" (click)="shareTo('twitter')">𝕏 تويتر</button><button class="share-btn" (click)="shareTo('whatsapp')">💬 واتساب</button><button class="share-btn" (click)="shareTo('telegram')">📩 تيليجرام</button></div>
+              <div class="share-qr"><img [src]="qrCodeUrl()" alt="QR" width="140" height="140" loading="lazy"/><small>امسح الكود</small></div>
+>>>>>>> 7520dfc138125112298cb2c79528ace99c8440d2
             </div>
           </div>
         }
 
+<<<<<<< HEAD
         <!-- Links -->
         <section class="links-section" aria-label="الروابط">
           <ul class="links-list" role="list">
@@ -100,24 +112,35 @@
                     <span class="link-title">{{ link.title }}</span>
                     <span class="link-meta">{{ link.domain }}</span>
                   </div>
+=======
+        <section class="links-section" aria-label="الروابط">
+          <ul class="links-list" role="list">
+            @for (link of sortedLinks(); track link.id; let i = $index) {
+              <li class="link-item" [style.animation-delay]="i*50+'ms'">
+                <a class="link-btn" [href]="link.url" target="_blank" rel="noopener noreferrer" (click)="trackClick(link)" [attr.aria-label]="link.title">
+                  @if (link.pinned) { <span class="pinned-badge" title="مثبّت">📌</span> }
+                  <span class="link-icon" [class.brand-icon]="link.iconType==='brand'">{{ link.icon }}</span>
+                  <div class="link-content"><span class="link-title">{{ link.title }}</span><span class="link-meta">{{ link.domain }}</span></div>
+>>>>>>> 7520dfc138125112298cb2c79528ace99c8440d2
                   <span class="link-arrow" aria-hidden="true">←</span>
                 </a>
               </li>
             } @empty {
+<<<<<<< HEAD
               <li class="links-empty">
                 <span class="empty-icon">🔗</span>
                 <p>لا توجد روابط معروضة بعد</p>
               </li>
+=======
+              <li class="links-empty"><span class="empty-icon">🔗</span><p>لا روابط بعد</p></li>
+>>>>>>> 7520dfc138125112298cb2c79528ace99c8440d2
             }
           </ul>
         </section>
 
         <footer class="profile-footer">
-          <a class="brand-foot" routerLink="/" aria-label="وصلة - اصنع صفحتك">
-            <span class="brand-mark">🔗</span>
-            <span class="brand-name">وصلة</span>
-          </a>
-          <p class="footer-note">اجمع كل روابطك في صفحة واحدة أنيقة</p>
+          <a class="brand-foot" routerLink="/" aria-label="وصلة"><span class="brand-mark">🔗</span><span class="brand-name">وصلة</span></a>
+          <p class="footer-note">اجمع كل روابطك في صفحة واحدة</p>
         </footer>
       </article>
     </div>

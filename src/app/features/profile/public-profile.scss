@@ -93,6 +93,51 @@
   line-height: 1.6;
 }
 
+<<<<<<< HEAD
+=======
+/* ===== Skeleton ===== */
+.skeleton-profile { width: 100%; }
+
+/* ===== Password gate ===== */
+.password-gate {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 80vh; width: 100%; position: relative; z-index: 1;
+}
+.password-gate__card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 24px; padding: 2.5rem 2rem;
+  max-width: 380px; width: 100%; text-align: center;
+  animation: cardRise 0.5s ease both;
+}
+.password-gate__icon { font-size: 2.5rem; display: block; margin-bottom: 0.5rem; }
+.password-gate__card h1 { color: var(--text); margin: 0 0 0.3rem; font-size: 1.3rem; }
+.password-gate__card p { color: var(--muted); margin: 0 0 1.5rem; }
+.password-gate__card form { display: grid; gap: 0.75rem; }
+.password-gate__card input {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 12px; padding: 0.85rem 1rem;
+  color: var(--text); font-size: 1rem; text-align: center;
+  outline: none; direction: ltr; letter-spacing: 0.3em;
+}
+.password-gate__card input:focus { border-color: var(--brand); }
+.password-gate__card input.error { border-color: #ff6b6b; animation: shake 0.3s ease; }
+.pw-error { color: #ff6b6b; font-size: 0.85rem; font-weight: 600; }
+.password-gate__brand {
+  display: inline-block; margin-top: 1.5rem; color: var(--muted);
+  text-decoration: none; font-weight: 700; font-size: 0.85rem;
+  opacity: 0.6; transition: opacity 0.2s;
+}
+.password-gate__brand:hover { opacity: 1; }
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+>>>>>>> 7520dfc138125112298cb2c79528ace99c8440d2
 /* ===== حاوية الملف الشخصي ===== */
 .profile-container {
   width: 100%;
@@ -549,3 +594,26 @@
 /* ===== RTL ===== */
 :host { direction: rtl; }
 .profile-handle, .link-meta { direction: ltr; }
+<<<<<<< HEAD
+=======
+
+/* ===== Cover ===== */
+.profile-cover {
+  margin: -2.5rem -1.75rem 1.5rem;
+  height: 160px;
+  overflow: hidden;
+  border-radius: 28px 28px 0 0;
+}
+.cover-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* ===== Pinned badge ===== */
+.pinned-badge {
+  position: absolute; top: -6px; right: -6px;
+  font-size: 0.75rem; z-index: 2;
+}
+.link-btn { position: relative; }
+
+@media (max-width: 480px) {
+  .profile-cover { margin: -2rem -1.25rem 1.5rem; height: 120px; border-radius: 24px 24px 0 0; }
+}
+>>>>>>> 7520dfc138125112298cb2c79528ace99c8440d2

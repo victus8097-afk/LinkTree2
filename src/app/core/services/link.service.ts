@@ -39,10 +39,11 @@ export class LinkService {
       const { data, error } = await this.supabase.client
         .from('links')
         .insert({
-          profile_id: profileId,
-          title,
-          url,
+          profile_id: profileId, title, url,
           position: await this.nextPosition(profileId),
+          category: input.category ?? null,
+          password: input.password ?? null,
+          pinned: input.pinned ?? false,
         })
         .select()
         .single();
@@ -56,6 +57,9 @@ export class LinkService {
       url,
       position: await this.nextPosition(profileId),
       createdAt: new Date().toISOString(),
+      category: input.category ?? null,
+      password: input.password ?? null,
+      pinned: input.pinned ?? false,
     };
     const all = this.localLinks();
     all.push(link);
@@ -67,7 +71,11 @@ export class LinkService {
     if (this.supabase.isConfigured && this.supabase.client) {
       const { data, error } = await this.supabase.client
         .from('links')
+<<<<<<< HEAD
         .update({ title: link.title, url: link.url, position: link.position })
+=======
+        .update({ title: link.title, url: link.url, position: link.position, category: link.category, password: link.password, pinned: link.pinned })
+>>>>>>> 7520dfc138125112298cb2c79528ace99c8440d2
         .eq('id', link.id)
         .select()
         .single();
